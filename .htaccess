@@ -1,0 +1,12 @@
+## Prevent web clients from accessing any .ht* file.
+<Files ~ "^\.ht">
+    Order allow,deny
+    Deny from all
+</Files>
+
+RewriteEngine On
+RewriteCond %{HTTP_HOST} localhost$ [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^index.php$
+RewriteRule . /memeracing/index.php

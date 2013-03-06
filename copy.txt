@@ -1,0 +1,3 @@
+This package contains a few different open source libraries that are covered by different licenses.
+The shopping cart interface makes use of the other libraries to handle bitcoin transactions.
+The SCI files themselves aren't marked with any copyright info; it doesn't matter what you do with them.
