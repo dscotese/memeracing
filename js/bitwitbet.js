@@ -41,4 +41,18 @@ $(document).ready(function()
             this.value = (this.value == '') ? this.inx : this.value;
         }
     } );
+    
+    var n = 'cnt'+$('textarea')[0].name;
+    var countDiv = jQuery('<div>140</div>',
+    {
+        'style':'position:absolute; margin-top:-16px;',
+        'id':n
+    });
+    $('textarea').before(countDiv);
+    $('textarea').keyup(function()
+    {
+        var myName = this.name;
+        countDiv.text(140-this.value.length);
+        this.style.borderColor = (this.value.length > 140) ? 'red' : '#52A8EC';
+    });
 } );
