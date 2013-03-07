@@ -555,8 +555,10 @@ function bwb_main($tag = true)
 <br/><br/>
 <div class='prop'>
     <form class='regPrompt text-center' method='post' onsubmit='return validate_proposal(this);'>
+        <input type='hidden' name='edit'/>
         <textarea name='prompt' style='width:350px;' class='text-center'/>Enter your prompt here</textarea><br/>
-        <input type='submit' value='Register My Prompt' class='btn btn-primary'/>
+        <input type='submit' value='Register My Prompt' class='btn btn-primary'
+            title='After submitting, you can click your\nunderlined prompt to make edits.'/>
     </form><br/><br/>
     <form class='form-inline' method='post'>
         <input type='submit' value='Send voting instructions' class='btn btn-inverse'/> to
@@ -576,8 +578,18 @@ function showInspireTable($contests)
         extract($c);
         $c_pl = $numc == 1 ? "contest" : "contests";
         $e_pl = $nume == 1 ? "entry" : "entries";
-        $ret .= "<tr><td><a href='{$siteURL}proposal/$inspire_id'
-            title='Valued at $invested by $investors people.'>$inspiration</a></td>
+        if(@in_array($inspire_id,$_SESSION['myPrompts']) && 0 == $numc && 0 == $nume)
+        {
+            $inspiration = "<span id='p$inspire_id' class='editme'>$inspiration</span>
+                <a href='{$siteURL}proposal/$inspire_id'
+            title='Valued at $invested by $investors people.'>Visit your prompt.</a>";
+        }
+        else
+        {
+            $inspiration = "<a href='{$siteURL}proposal/$inspire_id'
+            title='Valued at $invested by $investors people.'>$inspiration</a>";
+        }
+        $ret .= "<tr><td>$inspiration</td>
             <td>$numc $c_pl with $nume $e_pl</td></tr>\n";
     }
     $ret = "<table class='contest list'>
@@ -618,10 +630,14 @@ function bwb_propose()
                 }
             }
         }
-        if( storePrompt($prompt) )
+        if( $newp = storePrompt($prompt) )
         {
             $ret = "Your prompt has been stored.";
             $contests = getInspires();
+            if($_POST['edit'] == '')
+            {
+                $_SESSION["myPrompts"][] = $newp;
+            }
         }
         else
         {
@@ -690,6 +706,8 @@ function bwb_proposal()
         $ret .= "There are no answers yet.";
     }
 
+    $frmEmail = $_SESSION['email'];
+    $frmEmail = $frmEmail > '' ? $frmEmail : 'Enter your email address';
     $ret .= <<< PROPOSE
 <br/><br/>
 <h2>Propose your own answer</h2>
@@ -698,11 +716,17 @@ function bwb_proposal()
     list above so you can reserve it and then back it.  You will receive some bitcoin if
     anyone backs your answer.
 </p>
+<div style='float:right; width: 50%'>
+Your answer will appear in the list above with an underline.
+Click it to make changes before your session expires in about an hour.
+Note that if someone reserves it, you will no longer be able to edit it.
+</div>
 <div class='prop'>
     <form method='post' onsubmit='return validate_answer(this);'>
         <input type='hidden' name='inspire_id' value='$inspire_id' />
+        <input type='hidden' name='edit'/>
         <textarea name='answer' style='width:350px;'/>Enter your response here</textarea><br/>
-        <input type='email' name='email' value='Enter your email address'/><br/>
+        <input type='email' name='email' value='$frmEmail'/><br/>
         <input type='text' name='btc_addr' size='34' value='Bitcoin Address'/>
         <input type='submit' value='Register My Answer'/>
     </form>
@@ -718,6 +742,10 @@ function showEntryTable($entries)
     foreach($entries as $_entry)
     {
         extract($_entry);
+        if(@in_array($entry_id, $_SESSION['myAnswers']) && backing == 0)
+        {
+            $entry = "<span id='a$entry_id' class='editme'>$entry</span>";
+        }
         $entry_rows .= "<tr><td>$level</td>
             <td><input type='submit' name='r[$entry_id]' value='Reserve' /></td>
             <td title='backed by $backing'>$entry</td></tr>\n";
@@ -944,10 +972,15 @@ function bwb_respond()
                 }
             }
         }
-        if( storeAnswer($answer, $email, $inspire_id, $addr) )
+        if( $newa = storeAnswer($answer, $email, $inspire_id, $addr) )
         {
             $entries = getEntries($inspire_id);
             $ret = "Your answer has been stored.";
+            if($_POST['edit'] == '')
+            {
+                $_SESSION["myAnswers"][] = $newa;
+            }
+            $_SESSION['email'] = $email;
         }
         else
         {

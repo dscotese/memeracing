@@ -161,7 +161,7 @@ function setup_db()
 
 function dbQuote($raw)
 {
-    return str_replace(array("'","\\"),array("''","\\\\"),$raw);
+    return trim(str_replace(array("'","\\"),array("''","\\\\"),$raw));
 }
 
 function getSelect($table, $field, $val, $selected, $blockAll = false)
@@ -290,8 +290,30 @@ function storePrompt($prompt)
     global $db;
     $p = dbQuote($prompt);
     $hash = normHash($prompt);
-    return $db->sql_query("INSERT INTO inspire(inspiration, hash)
-        VALUES('$p','$hash')");
+    $pid=dbQuote($_POST['edit']);
+    if($pid != '')
+    {
+        if(@in_array($pid, $_SESSION['myPrompts']))
+        {
+            $sql = '' == $p
+                ? "DELETE FROM inspire"
+                : "UPDATE inspire SET inspiration='$p', hash='$hash'";
+
+            $db->sql_query("$sql WHERE inspire_id=$pid");
+        }
+        else
+        {
+            $SQLErrors[] = "Session Expired.";
+            return false;
+        }
+    }
+    else
+    {
+        $db->sql_query("INSERT INTO inspire(inspiration, hash)
+            VALUES('$p','$hash')");
+        $pid = $db->sql_nextid();
+    }
+    return $pid;
 }
 
 function storeAnswer($answer, $email,$iid, $addr)
@@ -306,8 +328,31 @@ function storeAnswer($answer, $email,$iid, $addr)
         $SQLErrors[] = 'Email address could not be added.';
         return false;
     }
-    return $db->sql_query("INSERT INTO entry(entry, player_id, inspire_id, hash, btc_addr)
-        VALUES('$p', $eid, $iid,'$hash','$a')");
+    $entry_id=dbQuote($_POST['edit']);
+    if($entry_id > '')
+    {
+        if(@in_array($entry_id, $_SESSION['myAnswers']))
+        {
+            $sql = '' == $p
+                ? "DELETE FROM entry"
+                : "UPDATE entry INNER JOIN player USING(player_id)
+                    SET entry='$p', hash='$hash', email=$eid";
+
+            $db->sql_query("$sql WHERE entry_id=".$entry_id);
+        }
+        else
+        {
+            $SQLErrors[] = 'Session Expired.';
+            return false;
+        }
+    }
+    else
+    {
+        $db->sql_query("INSERT INTO entry(entry, player_id, inspire_id, hash, btc_addr)
+            VALUES('$p', $eid, $iid,'$hash','$a')");
+        $entry_id = $db->sql_nextid();
+    }
+    return $entry_id;
 }
 
 function getEntries($inspire_id)

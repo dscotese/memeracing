@@ -91,7 +91,7 @@ function checkStep()
     {
     case 2: // Ensure that the inspire showed up.
         var found = false;
-        unittest.$("a").each(function(i,v)
+        unittest.$("span").each(function(i,v)
         {
             found = found || ('Wanna try' == (v.innerHTML.match(/Wanna try/)));
         });
@@ -109,7 +109,7 @@ function checkStep()
         }
         break;
     case 4: // Verify second prompt
-        unittest.$("a").each(function(i,v)
+        unittest.$("span").each(function(i,v)
         {
             found = found || ('dog food' == (v.innerHTML.match(/dog food/)));
         });
@@ -136,7 +136,7 @@ function checkStep()
     case 36: // Check for "Active Contests"
         if(!unittest.$("h3").text().match(/Active Level 1 Contests/))
         {
-            report("Level 1 Contest not found.");
+            report("Level 1 Contest not found, retrying...");
             step = 35;
             unittest = window.open("<?=$siteURL?>proposal/1","unittest");
             return false;

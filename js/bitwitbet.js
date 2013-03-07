@@ -42,17 +42,36 @@ $(document).ready(function()
         }
     } );
     
-    var n = 'cnt'+$('textarea')[0].name;
-    var countDiv = jQuery('<div>140</div>',
+    // Add counters to text area inputs
+    if($('textarea').length > 0)
     {
-        'style':'position:absolute; margin-top:-16px;',
-        'id':n
-    });
-    $('textarea').before(countDiv);
-    $('textarea').keyup(function()
-    {
-        var myName = this.name;
-        countDiv.text(140-this.value.length);
-        this.style.borderColor = (this.value.length > 140) ? 'red' : '#52A8EC';
-    });
+        var n = 'cnt'+$('textarea')[0].name;
+        var countDiv = jQuery('<div>140 characters left</div>',
+        {
+            'style':'position:absolute; margin-top:-16px;',
+            'id':n
+        });
+        $('textarea').before(countDiv);
+        $('textarea').keyup(function()
+        {
+            var myName = this.name;
+            countDiv.text(140-this.value.length +" characters left");
+            this.style.borderColor = (this.value.length > 140) ? 'red' : '#52A8EC';
+        });
+
+        // Let user know to edit their input
+        $('span.editme').attr('title','Click to Edit')
+            .css('text-decoration', 'underline')
+            .css('cursor','pointer');
+        $('span.editme').click(function(event)
+        {
+            $('textarea').val($(this).text());
+            countDiv.text(140-$(this).text().length);
+            $("input[name='edit']").val(this.id.substr(1));
+            $('html, body').animate({ 
+               scrollTop: $(document).height()-$(window).height()}, 
+               500
+            );
+        });
+    }
 } );
