@@ -299,7 +299,7 @@ function storePrompt($prompt)
                 ? "DELETE FROM inspire"
                 : "UPDATE inspire SET inspiration='$p', hash='$hash'";
 
-            $db->sql_query("$sql WHERE inspire_id=$pid");
+            $db->sql_query("$sql WHERE slot IS NULL AND inspire_id=$pid");
         }
         else
         {
@@ -338,7 +338,7 @@ function storeAnswer($answer, $email,$iid, $addr)
                 : "UPDATE entry INNER JOIN player USING(player_id)
                     SET entry='$p', hash='$hash', email=$eid";
 
-            $db->sql_query("$sql WHERE entry_id=".$entry_id);
+            $db->sql_query("$sql WHERE slot IS NULL AND entry_id=".$entry_id);
         }
         else
         {

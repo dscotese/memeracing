@@ -1,0 +1,8 @@
+syntax: glob
+.svn*
+Bryce*
+notes_mr.txt
+jtest.html
+dragsort.html
+betCalc.xls
+Meme Racing.pptx
