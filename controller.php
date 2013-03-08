@@ -362,6 +362,7 @@ function listPlayerContests($pid)
             foreach($contests as $c)
             {
                 extract($c);
+                $inspiration = htmlspecialchars($inspiration);
                 $ret .= "<li><a href='{$siteURL}vote_on/$contest_id'>$inspiration</a></li>\n";
             }
             $ret .= "</ul>";
@@ -576,6 +577,7 @@ function showInspireTable($contests)
     foreach($contests as $c)
     {
         extract($c);
+        $inspiration = htmlspecialchars($inspiration);
         $c_pl = $numc == 1 ? "contest" : "contests";
         $e_pl = $nume == 1 ? "entry" : "entries";
         if(@in_array($inspire_id,$_SESSION['myPrompts']) && 0 == $numc && 0 == $nume)
@@ -625,6 +627,7 @@ function bwb_propose()
                 if(normalize($contest['inspiration']) == normalize($prompt))
                 {
                     extract($contest);
+                    $inspiration = htmlspecialchars($inspiration);
                     return "Your prompt is too similar to
                         <a href='{$siteURL}proposal/$inspire_id'>$inspiration</a>.";
                 }
@@ -696,6 +699,7 @@ function bwb_proposal()
     $inspire = getInspire($inspire_id);
     extract($inspire);
 
+    $inspiration = htmlspecialchars($inspiration);
     $ret .= "<h2>Answers to &ldquo;$inspiration&rdquo;</h2>";
     if($entries)
     {
@@ -742,6 +746,7 @@ function showEntryTable($entries)
     foreach($entries as $_entry)
     {
         extract($_entry);
+        $entry = htmlspecialchars($entry);
         if(@in_array($entry_id, $_SESSION['myAnswers']) && backing == 0)
         {
             $entry = "<span id='a$entry_id' class='editme'>$entry</span>";
@@ -787,6 +792,7 @@ function bwb_contest()
     $entries = getContestEntries($cid);
     $cData = getContest($cid);
     extract($cData);
+    $inspiration = htmlspecialchars($inspiration);
     $places = array(0,$first,$second,$third,$fourth,$fifth,$sixth,$seventh);
     $placesByEntry = array_flip($places);
     $n = 0;
@@ -900,6 +906,7 @@ function showContests($contests)
             foreach($entries as $idx => $_entry)
             {
                 extract($_entry);
+                $entry = htmlspecialchars($entry);
                 $bet = $bets[$idx]['total'];
                 $entry_rows .= "<li title='backed by $bet BTC'>$entry</li>\n";
             }
@@ -971,6 +978,7 @@ function bwb_respond()
                 if(normalize($e['entry']) == normalize($answer))
                 {
                     extract($e);
+                    $entry = htmlspecialchars($entry);
                     return "Your answer is too similar to '$entry'.";
                 }
             }
@@ -1005,11 +1013,11 @@ function bwb_reserve()
         $keys = array_keys($_POST['r']);
         $entry_to_reserve = $keys[0];
         $entry = getEntry($entry_to_reserve);
-        $entry_text = $entry['entry'];
+        $entry_text = htmlspecialchars($entry['entry']);
         $inspire_id = $entry['inspire_id'];
         $inspire = getInspire($inspire_id);
         $inspiration = "<a href='{$siteURL}proposal/$inspire_id'>"
-            .$inspire['inspiration']."</a>";
+            .htmlspecialchars($inspire['inspiration'])."</a>";
         $ret = start_timer($inspire_id, $entry_to_reserve,
             "to back '$entry_text' as an answer to '$inspiration'");
     }

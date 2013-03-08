@@ -461,7 +461,7 @@ function setupNext()
         return true;
         break;
     case 68: // And refresh proposal 1 until we see 7 links with "contest" in them
-        if(unittest.$("a[href*='contest']").length ! 7)
+        if(unittest.$("a[href*='contest']").length != 7)
         {
             unittest.location = "<?=$siteURL?>proposal/1";
             step = 67;
