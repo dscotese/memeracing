@@ -1,10 +1,10 @@
 <?
 $home = 1;
+$notMailed = "";
 session_start();
 include('queries.php');
 include('controller.php');
 $path = explode("/",$_SERVER['REQUEST_URI']);
-$notMailed = "";
 if($path[0] == '')
 {
     array_shift($path);

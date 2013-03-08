@@ -157,7 +157,7 @@ function getBettor($tx)
     $url = "https://blockchain.info/rawtx/$tx";
     if($ranking_debug)
     {
-        $inAddr = substr($tx,0,10)."Input";
+        $inAddr = substr(preg_replace('/[^a-zA-Z0-9]/','',$tx),0,10)."Input";
     }
     else
     {
@@ -893,6 +893,7 @@ function showContests($contests)
         else
         {
             $bets = getBetsByEntry($contest_id);
+            $entry_rows = "";
 
             // Display contests with entrants still voting
             // -------------------------------------------
@@ -902,7 +903,9 @@ function showContests($contests)
                 $bet = $bets[$idx]['total'];
                 $entry_rows .= "<li title='backed by $bet BTC'>$entry</li>\n";
             }
-            $ret .= "<ul>$entry_rows</ul>";
+            $ret .= "<h4>Contest $contest_id ends at $deadline
+                <span class='note' title='May end sooner if entrants all vote'>*</span></h4>
+                <ul>$entry_rows</ul>";
         }
     }
     return $ret;

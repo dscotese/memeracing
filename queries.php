@@ -391,7 +391,8 @@ function getBackedEntries($inspire_id, $level)
     $sql = "SELECT e.*, SUM(b.amount) as backing, p.email
         FROM entry e INNER JOIN backing b USING(entry_id, inspire_id)
             INNER JOIN player p USING(player_id)
-        WHERE inspire_id=$inspire_id AND level=$level AND contest_id IS NULL
+        WHERE inspire_id=$inspire_id AND level=$level
+            AND contest_id IS NULL AND b.amount > 0
         GROUP BY entry_id ORDER BY entry_id";
     return $db->result($sql);
 }
@@ -858,7 +859,7 @@ function getContests($iid)
 {
     global $db;
     $sql = "SELECT * FROM contest WHERE inspire_id=$iid
-        ORDER BY CASE first WHEN NULL THEN 0 ELSE 1 END, level DESC, created";
+        ORDER BY CASE WHEN first IS NULL THEN 1 ELSE 0 END, level DESC, created";
     return $db->result($sql);
 }
 

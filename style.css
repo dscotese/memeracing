@@ -118,6 +118,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8fc400', end
  margin-top: 16px;
 }
 
+span.note {
+    cursor: pointer;
+    color: red;
+}
+
 /* register prompt forms */
 form.regPrompt {
 }

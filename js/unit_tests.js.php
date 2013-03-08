@@ -9,8 +9,14 @@
 var unittest;
 var links;
 var limits = location.href.split('/test/')[1].split('/');
-var step = 1 * limits[0];
+var step = 1 * limits[0] - 1;
+step = step < 0 ? 0 : step;
 var last = 1 * limits[1];
+var leaps = Array();
+if(limits.length > 1)
+{
+    leaps =  eval('('+unescape(limits[2])+')');
+}
 var retries = 0;
 var cnttr = 0;
 step = isNaN(step) ? 0 : step;
@@ -53,14 +59,20 @@ function report(str)
 
 function proceed()
 {
-    if(++cnttr > 100)
+    if(++cnttr > 200)
     {
         alert("Stopping because cnttr is at 100");
         return;
     }
 
     step += 1;
-    if(location.href.match(step-1) || checkStep())
+    skipping = false;
+    if(leaps[step])
+    {
+        step = leaps[step];
+        skipping = true;
+    }
+    if(location.href.match(step-1) || skipping || checkStep())
     {
         $("div#testlinks").html(links.slice(step-2,step+2).join('<br/>'));
         if(step >= (1*last)+1)
@@ -262,6 +274,21 @@ function checkStep()
             return false;
         }
         break;
+    case 69: // Verify the last winner
+        if(!unittest.$("a[href*='contest']")[6].innerHTML.match(/It and The more Robbing/))
+        {
+            report("7th level 1 contest didn't get correct winner.");
+            return false;
+        }
+        break;
+    case 70: // Verify payout to 2nd place bettor
+        if(!unittest.$('div#content').text().match(/Address 5964d... received 0.13054950 BTC./))
+        {
+            report("Payout to 2nd place in contest 7 is wrong or missing.");
+            return false;
+        }
+        break;
+
     default: break;
     }
     return true;
@@ -355,34 +382,7 @@ function setupNext()
         unittest = window.open("<?=$siteURL?>vote_on/1/7326451","unittest");
         break;
     case 57: // Set deadline to now (Hidden feature)
-        $.get("<?=$siteURL?>received?value=1000001&transaction_hash="
-            + "x64d98add54e324565bcb4e3b006d7fd9b3eafb09757bcf7bb6dcc2e488b2e36&"
-            + "input_address=1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW&confirmations=0&secret=2e5389693l17e2634",
-            "",function(data, status)
-            {
-                if(!data.match(/\*OK\*/))
-                {
-                    report("Deadline not updated");
-                    return false;
-                }
-                if( cronWait("<?=$siteURL?>proposal/1",function()
-                    {
-                        if(!unittest.$("h3").text().match(/Completed/))
-                        {
-                            report("No H3 with 'Completed' in it.");
-                            return false;
-                        }
-                        else
-                        {
-                            report("Ok - saw the H3");
-                            return true;
-                        }
-                    },'Expedited Contest 1'))
-                {
-                    unittest.location=unittest.$("a[href*='contest']").attr('href');
-                };
-            });
-            return true;
+        return expediteContest(57,1,1,unittest.$("a[href*='contest']").attr('href'));
         break;
     case 58: // Go home to use Voting Instructions box.
         unittest.location="<?=$siteURL?>logout";
@@ -429,16 +429,96 @@ function setupNext()
             debug("Reserving "+cnttr);
         }
         break;
+    case 65: // Bet .1 on 45 entries to trigger 6 more contests
+        var pretx = "";
+        for(var counter = 65; counter > 20; --counter)
+        {
+            pretx = (15+counter);
+            testBet(10000001 + 100*counter, pretx, counter);
+        }
+        unittest.location = "<?=$siteURL?>proposal/1";
+        break;
+
+    case 66: // Just refresh proposal 1 until we see active contest 8.
+        if(!unittest.$('h4').text().match(/Contest 7/))
+        {
+            unittest.location = "<?=$siteURL?>proposal/1";
+            step = 65;
+            return true;
+        }
+        unittest.location = "<?=$siteURL?>proposal/1";
+        break;
+
+    case 67: // Now Expedite 7 contests
+        expediteContest(67,2,1,unittest.location.href);
+        expediteContest(67,3,1,unittest.location.href);
+        expediteContest(67,4,1,unittest.location.href);
+        expediteContest(67,5,1,unittest.location.href);
+        expediteContest(67,6,1,unittest.location.href);
+        expediteContest(67,7,1,unittest.location.href);
+        expediteContest(67,8,1,unittest.location.href);
+        unittest.location = "<?=$siteURL?>proposal/1";
+        return true;
+        break;
+    case 68: // And refresh proposal 1 until we see 7 links with "contest" in them
+        if(unittest.$("a[href*='contest']").length ! 7)
+        {
+            unittest.location = "<?=$siteURL?>proposal/1";
+            step = 67;
+            return true;
+        }
+        break;
+    case 69: // Visit contest 7 results
+        unittest.location = unittest.$("a[href*='contest']")[6].href;
+        break;
+
+    case 70: // back the level 1 winners to run a second level contest.
+
     default: debug("End of tests");
     }
     return true;
 }
 
-function cronWait(url,test,name)
+function expediteContest(cur,c,i,goto)
+{ // http://localhost/memeracing/received?value=1000001&transaction_hash=Inv164d98a&secret=2e5389693117e2634
+    $.get("<?=$siteURL?>received?value=1000"+(("000"+c).substr(-3))+"&transaction_hash="
+        + "x64d98add54e324565bcb4e3b006d7fd9b3eafb09757bcf7bb6dcc2e488b2e36&"
+        + "input_address=1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW&confirmations=0&secret=2e5389693l17e2634",
+        "",function(data, status)
+        {
+            if(!data.match(/\*OK\*/))
+            {
+                report("Deadline not updated");
+                return false;
+            }
+            if( cronWait(cur,"<?=$siteURL?>proposal/"+i,function(w)
+                {
+                    return function()
+                    {
+                        if(!w.$("h3").text().match(/Completed/))
+                        {
+                            report("No H3 with 'Completed' in it.");
+                            return false;
+                        }
+                        else
+                        {
+                            report("Ok - saw the H3");
+                            return true;
+                        }
+                    };
+                }(unittest),'Expedited Contest '+i))
+            {
+                unittest.location=goto;
+            };
+        });
+    return true;
+}
+
+function cronWait(cur,url,test,name)
 {
     if(!test())
     {
-        step = step - 1;
+        step = cur - 1;
         unittest = window.open(url,'unittest');
         report("Waiting for "+name+" again...");
         return false;
@@ -557,7 +637,8 @@ function addEntry(e, a)
     {
         report("Going to prompt 1.");
         unittest = window.open("<?=$siteURL?>proposal/1","unittest");
-        return false;
+        step = step - 1;
+        return true;
     }
     frm.email.value = e;
     frm.answer.value = a;
@@ -615,7 +696,7 @@ function addAnswer(contest,n)
         answer = "";
         for(var i = 0; i < 10; ++i)
         {
-            r = Math.floor(Math.random() * numw);
+            r = Math.floor(numw*('0.'+Math.sin(10*n+i).toString().substr(6)));
             answer = answer + ' ' + words[r];
         }
     }
