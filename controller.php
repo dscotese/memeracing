@@ -280,8 +280,11 @@ function bwb_contact()
 
 function bwb_logout()
 {
-    unset($_SESSION['id']);
-    unset($_SESSION['email']);
+    session_unset();
+    session_destroy();
+    session_write_close();
+    setcookie(session_name(),'',0,'/');
+    session_regenerate_id(true);
     return "You've been logged out.".bwb_main();
 }
 
@@ -580,7 +583,9 @@ function showInspireTable($contests)
         $inspiration = htmlspecialchars($inspiration);
         $c_pl = $numc == 1 ? "contest" : "contests";
         $e_pl = $nume == 1 ? "entry" : "entries";
-        if(@in_array($inspire_id,$_SESSION['myPrompts']) && 0 == $numc && 0 == $nume)
+        if(isset($_SESSION['myPrompts'])
+            && @in_array($inspire_id,$_SESSION['myPrompts'])
+            && 0 == $numc && 0 == $nume)
         {
             $inspiration = "<span id='p$inspire_id' class='editme'>$inspiration</span>
                 <a href='{$siteURL}proposal/$inspire_id'
@@ -637,7 +642,11 @@ function bwb_propose()
         {
             $ret = "Your prompt has been stored.";
             $contests = getInspires();
-            if($_POST['edit'] == '')
+            if(!isset($_SESSION["myPrompts"]))
+            {
+                $_SESSION['myPrompts'] = array();
+            }
+            if($_POST['edit'] == '' && !in_array($newp,$_SESSION['myPrompts']))
             {
                 $_SESSION["myPrompts"][] = $newp;
             }
@@ -747,7 +756,9 @@ function showEntryTable($entries)
     {
         extract($_entry);
         $entry = htmlspecialchars($entry);
-        if(@in_array($entry_id, $_SESSION['myAnswers']) && backing == 0)
+        if(isset($_SESSION['myAnswers'])
+            && @in_array($entry_id, $_SESSION['myAnswers'])
+            && backing == 0)
         {
             $entry = "<span id='a$entry_id' class='editme'>$entry</span>";
         }
@@ -987,7 +998,11 @@ function bwb_respond()
         {
             $entries = getEntries($inspire_id);
             $ret = "Your answer has been stored.";
-            if($_POST['edit'] == '')
+            if(!isset($_SESSION["myAnswers"]))
+            {
+                $_SESSION['myAnswers'] = array();
+            }
+            if($_POST['edit'] == '' && !in_array($newa,$_SESSION['myAnswers']))
             {
                 $_SESSION["myAnswers"][] = $newa;
             }
