@@ -1037,7 +1037,10 @@ function start_timer($iid, $eid, $goal)
 
     $ret = "You have 15 minutes starting at ".date(DATE_RFC822)
         ." to send an amount ending in $slot (eg 1.0500$slot) to our bitcoin address
-        if you would like $goal.<br/>";
+        if you would like $goal.<br/>
+        <strong>Bitcoins are paid back to the address from which they came.</strong>
+            <a href='http://satoshidice.com'>Satoshi Dice</a> has a mechanism
+            you can use to test this.";
     return $ret;
 };
 
