@@ -13,7 +13,7 @@ var step = 1 * limits[0] - 1;
 step = step < 0 ? 0 : step;
 var last = 1 * limits[1];
 var leaps = Array();
-if(limits.length > 1)
+if(limits.length > 2)
 {
     leaps =  eval('('+unescape(limits[2])+')');
 }
