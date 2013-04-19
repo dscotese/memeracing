@@ -45,10 +45,7 @@ include('header.php');
 
       <div class="hero">
         <div class="container">
-          <h1>What is a Meme Race?</h1>
-          <p class="lead"><strong>Meme Race</strong> [mim reɪs] <em>noun</em></p>
-          <p class="lead">1) A way to win some Bitcoin&#33;</p>
-          <p class="lead">2) An initial inspirational prompt and all its recorded responses, which are then randomly batched into sevens, giving the response creators an opportunity to order them from best to worst. The results are processed to identify the best of those seven.</p>
+          <?php include('slideshow.html'); ?>
         </div>
       </div>
 
