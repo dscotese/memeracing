@@ -42,17 +42,19 @@ if($_SESSION['id'] > '')
 }
 include('header.php');
 ?>
-      <?php if(preg_match("'<main/>'",$content)) { ?>
-      <div class="jumbotron">
-        <h1>What is a Meme Race?</h1>
-        <p class="lead"><strong>Meme Race</strong> [mim reɪs] <em>noun</em></p>
-        <p class="lead">1) An initial inspirational prompt and all its recorded responses, which are then randomly batched into sevens, giving the response creators an opportunity to order them from best to worst. The results are processed to identify the best of those seven.</p>
+
+      <div class="hero">
+        <div class="container">
+          <h1>What is a Meme Race?</h1>
+          <p class="lead"><strong>Meme Race</strong> [mim reɪs] <em>noun</em></p>
+          <p class="lead">1) A way to win some Bitcoin&#33;</p>
+          <p class="lead">2) An initial inspirational prompt and all its recorded responses, which are then randomly batched into sevens, giving the response creators an opportunity to order them from best to worst. The results are processed to identify the best of those seven.</p>
+        </div>
       </div>
-      <?php } ?>
 
-      <hr>
-
-        <div id="content">
+      <div class="mr-field">
+        <div id="main" class="container">
+          <div id="content">
 <?php if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' ) {
     $randTx = md5(time()).'b3eafb09757bcf7bb6dcc2e488b2e368';
 ?>
@@ -70,6 +72,8 @@ include('header.php');
 
             <?php echo $content; ?>
 
-        </div><!--end content-->
+          </div> <!--end #content-->
+        </div> <!--end #main-->
+      </div>
 
 <?php include('footer.php'); ?>

@@ -31,7 +31,7 @@ function auto_version($file)
     <!--[if gte IE 9]>
       <style type="text/css">
         .gradient {
-           filter: none;
+           filter: none !important;
         }
       </style>
     <![endif]-->
@@ -63,15 +63,15 @@ GA;
     }
 ?>
 
-  <div class="container containerPadded">
       <?=$notMailed?>
-      <div class="masthead">
-        <h3 class="mrheader">Meme Racing <small class="pull-right bc-addr">Our bitcoin address: 1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW</small></h3>
-        <div class="navbar">
-          <div class="navbar-inner">
+    <header>
+      <div class="masthead container">
+        <h3 class="mr-header">Meme Racing <small class="pull-right bc-addr">Our bitcoin address: 1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW</small></h3>
+        <div class="navbar navbar-inverse">
+          <div class="navbar-inner gradient">
             <div class="container">
               <ul class="nav">
-                <li class="active"><a href="<?=$siteURL?>">Home</a></li>
+                <li><a href="<?=$siteURL?>">Home</a></li>
                 <li><a href="<?=$siteURL?>">Prompts</a></li>
                 <li><a href="<?=$siteURL?>faq">FAQ</a></li>
                 <li><a href="<?=$siteURL?>contact">Contact</a></li>
@@ -81,3 +81,4 @@ GA;
           </div>
         </div><!-- /.navbar -->
       </div>
+    </header>

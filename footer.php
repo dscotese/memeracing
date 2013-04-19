@@ -1,7 +1,10 @@
-    </div> <!-- /main content container -->
-      <footer id="footer" class="container containerPadded">
-        <p class="copyright text-center">&copy; Memeracing.net</p>
-      </footer>
+    <footer>
+        <div id="mr-footer" class="container">
+            <div class="mr-footer-content">
+            </div>
+        </div>
+            <p class="copyright text-center">&copy; Memeracing.net</p>
+    </footer>
 <?php
     if(!$hide_debug)
     {
