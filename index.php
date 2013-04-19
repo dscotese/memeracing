@@ -45,7 +45,7 @@ include('header.php');
 
       <div class="hero">
         <div class="container">
-          <?php include('slideshow.html'); ?>
+          <?php if(!function_exists($fn)) include('slideshow.html'); ?>
         </div>
       </div>
 
