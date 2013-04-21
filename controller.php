@@ -769,7 +769,7 @@ function showEntryTable($entries)
     $ret .= "<p class='inx'>
         If you would like to back one of these answers, click the reserve button.
         This will provide you with a four-digit code that you must use as the last
-        four digits of the amount of bitcoin you send to our address.  You will have
+        four digits of the amount of bitcoin you send to our address ($OUR_BTC_ADDR).  You will have
         15 minutes to place your wager.  If you place it after the 15 minutes, you may
         be backing a different answer.  You can always come back to this page to
         reserve this answer again, if it's still here.
@@ -1051,9 +1051,11 @@ function start_timer($iid, $eid, $goal)
     }
 
     $ret = "You have 15 minutes starting at ".date(DATE_RFC822)
-        ." to send an amount ending in $slot (eg 1.0500$slot) to our bitcoin address
+        ." to send an amount ending in $slot (eg 1.0500$slot) to our bitcoin address ($OUR_BTC_ADDR)
         if you would like $goal.<br/>
-        <strong>Bitcoins are paid back to the address from which they came.</strong>
+        <strong>If you're backing a prompt the 4 digit code starts with two zeroes.
+            If you're backing a response, the code will be greater than 0099.
+            Bitcoins are paid back to the address from which they came.</strong>
             <a href='http://satoshidice.com'>Satoshi Dice</a> has a mechanism
             you can use to test this.";
     return $ret;

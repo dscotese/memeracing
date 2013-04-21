@@ -66,7 +66,7 @@ GA;
       <?=$notMailed?>
     <header>
       <div class="masthead container">
-        <h3 class="mr-header">Meme Racing <small class="pull-right bc-addr">Our bitcoin address: 1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW</small></h3>
+        <h3 class="mr-header">Meme Racing <small class="pull-right bc-addr">Our bitcoin address: <?=$OUR_BTC_ADDR?></small></h3>
         <div class="navbar navbar-inverse">
           <div class="navbar-inner gradient">
             <div class="container">
