@@ -752,6 +752,7 @@ PROPOSE;
 
 function showEntryTable($entries)
 {
+    global $OUR_BTC_ADDR;
     foreach($entries as $_entry)
     {
         extract($_entry);
@@ -1041,6 +1042,7 @@ function bwb_reserve()
 
 function start_timer($iid, $eid, $goal)
 {
+    global $OUR_BTC_ADDR;
     $slot = find_slot($iid, $eid);
 
     if($slot == '0000' || (substr($slot,0,2) == '00' && $eid > ''))
