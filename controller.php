@@ -285,7 +285,7 @@ function bwb_logout()
     session_write_close();
     setcookie(session_name(),'',0,'/');
     session_regenerate_id(true);
-    return "You've been logged out.".bwb_main();
+    return "You've been logged out.".bwb_prompts();
 }
 
 function bwb_vote()
@@ -322,11 +322,11 @@ function bwb_vote()
         }
         else
         {
-            $ret = bwb_main();
+            $ret = bwb_prompts();
         }
     }
         return $ret;
-    }
+}
 
 function oneTimeLogin($player)
 {
@@ -540,12 +540,12 @@ function bwb_reset()
     echo "<script>location.href='$siteURL';</script>";
 }
 
-function bwb_main($tag = true)
+function bwb_prompts($tag = true)
 {
     global $contests, $siteURL;
     $contests = getInspires();
 
-    $ret = isPost('propose').($tag ? '<main/>' : '');
+    $ret = notice(isPost('propose')).($tag ? '<main/>' : '');
     if($contests)
     {
         $ret .= showInspireTable($contests);
@@ -608,10 +608,6 @@ function showInspireTable($contests)
 function isPost($fn)
 {
     $ret = count($_POST) > 0 ? call_user_func("bwb_$fn") : "";
-    if($ret > '')
-    {
-        $ret = "<div class='notice'>$ret</div><br/>";
-    }
     return $ret;
 }
 
@@ -633,6 +629,7 @@ function bwb_propose()
                 {
                     extract($contest);
                     $inspiration = htmlspecialchars($inspiration);
+
                     return "Your prompt is too similar to
                         <a href='{$siteURL}proposal/$inspire_id'>$inspiration</a>.";
                 }
@@ -701,9 +698,7 @@ function bwb_proposal()
     $entries = getEntries($inspire_id);
     $ret = isPost('respond');
 
-    $ret .= "<div class='notice'>"
-        .start_timer($inspire_id,0,'to back this prompt' )
-        ."</div>";
+    $ret .= start_timer( $inspire_id,0,'to back this prompt' );
 
     $inspire = getInspire($inspire_id);
     extract($inspire);
@@ -724,15 +719,17 @@ function bwb_proposal()
     $ret .= <<< PROPOSE
 <br/><br/>
 <h2>Propose your own answer</h2>
-<p class='inx'>
+<div class='inx'>
+    <div>
     Got an answer better than all those above?  Enter it here.  It will then show up in the
     list above so you can reserve it and then back it.  You will receive some bitcoin if
     anyone backs your answer.
-</p>
-<div style='float:right; width: 50%'>
-Your answer will appear in the list above with an underline.
-Click it to make changes before your session expires in about an hour.
-Note that if someone reserves it, you will no longer be able to edit it.
+    </div>
+    <div style='float:right; width: 30%'>
+    Your answer will appear in the list above with an underline.
+    Click it to make changes before your session expires in about an hour.
+    Note that if someone reserves it, you will no longer be able to edit it.
+    </div>
 </div>
 <div class='prop'>
     <form method='post' onsubmit='return validate_answer(this);'>
@@ -991,7 +988,7 @@ function bwb_respond()
                 {
                     extract($e);
                     $entry = htmlspecialchars($entry);
-                    return "Your answer is too similar to '$entry'.";
+                    return notice("Your answer is too similar to '$entry'.");
                 }
             }
         }
@@ -1011,7 +1008,7 @@ function bwb_respond()
         }
         else
         {
-            $ret = "An error occurred while saving your answer.";
+            $ret = notice("An error occurred while saving your answer.");
         }
     }
     else
@@ -1019,6 +1016,11 @@ function bwb_respond()
         $ret = isPost('reserve');
     }
     return $ret;
+}
+
+function notice($str)
+{
+    return "<div class='notice'>$str</div>";
 }
 
 function bwb_reserve()
@@ -1035,32 +1037,34 @@ function bwb_reserve()
         $inspiration = "<a href='{$siteURL}proposal/$inspire_id'>"
             .htmlspecialchars($inspire['inspiration'])."</a>";
         $ret = start_timer($inspire_id, $entry_to_reserve,
-            "to back '$entry_text' as an answer to '$inspiration'");
+                "to back '$entry_text' as an answer to '$inspiration'", $entry_text);
     }
     return $ret;
 }
 
-function start_timer($iid, $eid, $goal)
+function start_timer($iid, $eid, $goal, $answer = '')
 {
     global $OUR_BTC_ADDR;
     $slot = find_slot($iid, $eid);
 
     if($slot == '0000' || (substr($slot,0,2) == '00' && $eid > ''))
     {
-        return "($slot)We are unable to reserve a slot for this "
+        $ret =  "($slot)We are unable to reserve a slot for this "
             .($eid > 0 ? "response" : "prompt")." at this time.
             Please try again in a few minutes.";
     }
 
+    $for = $eid > 0 ? str_replace("'","&apos;",strip_tags($answer)) : "this prompt";
+
     $ret = "You have 15 minutes starting at ".date(DATE_RFC822)
         ." to send an amount ending in $slot (eg 1.0500$slot) to our bitcoin address ($OUR_BTC_ADDR)
         if you would like $goal.<br/>
-        <strong>If you're backing a prompt the 4 digit code starts with two zeroes.
+        <strong>If you're backing a prompt, the 4 digit code starts with two zeroes.
             If you're backing a response, the code will be greater than 0099.
             Bitcoins are paid back to the address from which they came.</strong>
             <a href='http://satoshidice.com'>Satoshi Dice</a> has a mechanism
             you can use to test this.";
-    return $ret;
+    return "<div class='inx' inx='Code for $for: $slot'>$ret</div>";
 };
 
 function find_slot($iid, $eid)

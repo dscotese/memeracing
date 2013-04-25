@@ -59,7 +59,7 @@ $(document).ready(function()
             this.style.borderColor = (this.value.length > 140) ? 'red' : '#52A8EC';
         });
 
-        // Let user know to edit their input
+    // And let user know to edit their input
         $('span.editme').attr('title','Click to Edit')
             .css('text-decoration', 'underline')
             .css('cursor','pointer');
@@ -74,4 +74,45 @@ $(document).ready(function()
             );
         });
     }
+    
+    // Bury instructions in "Hover for Help"
+    $('.inx').each(function()
+    {
+        if(this.getAttribute('inx'))
+        {
+            var tmp = this.getAttribute('inx');
+            this.inx = this.innerHTML;
+            this.innerHTML = tmp;
+        }
+        else
+        {
+            this.inx = this.innerHTML;
+            this.innerHTML = "Hover for Help";
+        }
+        this.tog = 0;
+        this.sTog = 0;
+    });
+    $('.inx').hover(function()
+    {
+        var delay = 200;
+        var now = new Date().getTime();
+        this.tog = 1 - this.tog;        // Should we be on or off?
+        if( this.tog != this.sTog )     // Are we what we should be?
+        {
+            window.setTimeout(function(o)
+            {
+                return function()
+                {
+                    if(o.tog != o.sTog)   // Still not what we should be
+                    {
+                        var tmp = o.innerHTML;
+                        o.innerHTML = o.inx;
+                        o.inx = tmp;
+                        o.sTog = o.tog;
+                    }
+                }
+            }(this), delay);
+        }
+    });
+    
 } );

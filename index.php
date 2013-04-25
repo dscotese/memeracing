@@ -32,7 +32,7 @@ if(function_exists($fn))
 }
 else
 {
-    $content = bwb_main();
+    // $content = bwb_prompts();
 }
 if($_SESSION['id'] > '')
 {
@@ -52,7 +52,7 @@ include('header.php');
       <div class="mr-field">
         <div id="main" class="container">
           <div id="content">
-<?php if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' ) {
+<?php if( substr($_SERVER['SERVER_ADDR'],0,6) == '127x.0.' ) {
     $randTx = md5(time()).'b3eafb09757bcf7bb6dcc2e488b2e368';
 ?>
             <form action='<?=$siteURL?>received' target='BCT' onsubmit='location.href="";'>

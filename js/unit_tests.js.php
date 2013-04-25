@@ -28,7 +28,7 @@ $(function()
 {
     if(window.name != "unittest")
     {
-        unittest = window.open("<?=$siteURL?>","unittest");
+        unittest = window.open("<?=$siteURL?>prompts","unittest");
     }
 
     cases = setupNext.toString().match(/case [0-9]+:.*/g);
@@ -139,7 +139,7 @@ function checkStep()
         }
         break;
     case 16: // Make sure we got a slot
-        if(!unittest.$("div.notice").text().match(/as an answer to/))
+        if(!unittest.$("div.inx").text().match(/essential liberty/))
         {
             report("Reservation of answer(1) not indicated");
             return false;

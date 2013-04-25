@@ -72,7 +72,7 @@ GA;
             <div class="container">
               <ul class="nav">
                 <li><a href="<?=$siteURL?>">Home</a></li>
-                <li><a href="<?=$siteURL?>">Prompts</a></li>
+                <li><a href="<?=$siteURL?>prompts">Prompts</a></li>
                 <li><a href="<?=$siteURL?>faq">FAQ</a></li>
                 <li><a href="<?=$siteURL?>contact">Contact</a></li>
                 <?=$logout?>
