@@ -27,7 +27,7 @@ if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' )
     $dbuser   = "root";
     $dbpasswd = "";
     $ranking_debug = true;
-    $siteURL = "http://localhost/memeracing/";
+    $siteURL = "/memeracing/";
     $docroot = "/htdocs/memeracing";
     $fnElemNum = 1;
     $dbname   = "test";

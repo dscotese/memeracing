@@ -33,7 +33,6 @@ header {
 
 #content, #mr-footer {
  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
- position: relative;
 }
 
 footer {
@@ -71,7 +70,6 @@ footer {
  margin-bottom: 10px;
  text-align: center;
  background: url('images/memerace-hero.jpg') no-repeat center 0;
- position: relative;
  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 .hero h1 {
@@ -170,14 +168,14 @@ form.regPrompt input[type="text"] {
 }
 
 #myOrder li {
- padding: 1.5% 2.5%;
- margin: 2px 0;
- background-color: #DD4B39;
- color: #fff;
- font-size: 1.1em;
- text-shadow: 0 1px rgba(0, 0, 0, 0.1);
- border: 1px solid #D14836;
- box-shadow: 0 0 2px #D14836 inset;
+    background-color: #3A5D2D;
+    border: 3px solid #814836;
+    border-radius: 15px 15px 15px 15px;
+    box-shadow: 0 0 2px #D14836 inset;
+    color: #FFFFFF;
+    font-size: 1.1em;
+    margin: 4px 0;
+    padding: 1% 2.5%;
 }
 
 /* Footer area styles */

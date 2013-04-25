@@ -12,19 +12,19 @@ function auto_version($file)
 <html dir="ltr" lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <link href="<?php echo $siteURL;?>favicon.png" rel="icon" type="image/x-icon">
+    <link href="<?auto_version($siteURL."favicon.png")?>" rel="icon" type="image/x-icon">
     <title>Meme Racing Dot Net</title>
     <meta name="viewport" content="width=device-width, minimum-scale=0.5, maximum-scale=1.6, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="description" content="MemeRacing.net is a breakthrough bitcoin based playground where ingenuity, creativity, and a sense for what others will appreciate profits anyone willing to use them.">
     <meta name="keywords" content="free bitcoin, earn bitcoin, meme racing, meme, ideas, brainstorm, crowdsource">
     <meta name="robots" content="index, follow">
-    <link href="<?=$siteURL?>bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="<?=$siteURL?>bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
-    <link rel="stylesheet" type="text/css" media="all" href="<?=$siteURL?>style.css">
+    <link href="<?=auto_version($siteURL."bootstrap/css/bootstrap.min.css")?>" rel="stylesheet" media="screen">
+    <link href="<?=auto_version($siteURL."bootstrap/css/bootstrap-responsive.min.css")?>" rel="stylesheet" media="screen">
+    <link rel="stylesheet" type="text/css" media="all" href="<?=auto_version($siteURL."style.css")?>">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="<?=$siteURL?>bootstrap/js/bootstrap.min.js"></script>
-    <script type='text/javascript' src="<?=$siteURL?>js/bitwitbet.js"></script>
+    <script src="<?=auto_version($siteURL."bootstrap/js/bootstrap.min.js")?>"></script>
+    <script type='text/javascript' src="<?=auto_version($siteURL."js/bitwitbet.js")?>"></script>
     <!--[if lt IE 9]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
