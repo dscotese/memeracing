@@ -6,7 +6,7 @@
             <p class="copyright text-center">&copy; Memeracing.net</p>
     </footer>
 <?php
-    if(!$hide_debug)
+    if(!$hide_debug && preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR']))
     {
         echo "<!-- /* ".print_r(get_defined_vars(),true)." */ -->";
     }

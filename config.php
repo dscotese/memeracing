@@ -37,7 +37,7 @@ elseif(preg_match('/devtest/',$_SERVER['REQUEST_URI']))
 {
     $dbhost   = "localhost";
     $dbuser   = "eminizer_mracing";
-    $dbpasswd = "1906411F6XFAAEX13";
+    $dbpasswd = "F6XFA@A906^11SH33";
     $ranking_debug = true;
     $siteURL = "/devtest/";
     $fnElemNum = 1;
@@ -49,7 +49,7 @@ else
 {
     $dbhost   = "localhost";
     $dbuser   = "eminizer_mracing";
-    $dbpasswd = "1906411F6XFAAEX13";
+    $dbpasswd = "F6XFA@A906^11SH33";
     $siteURL = "/";
     $fnElemNum = 0;
     $docroot = "/home/eminizer/public_html/memeracing.net";
