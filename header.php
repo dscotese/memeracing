@@ -12,19 +12,19 @@ function auto_version($file)
 <html dir="ltr" lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <link href="<?auto_version($siteURL."favicon.png")?>" rel="icon" type="image/x-icon">
+    <link href="<?php auto_version($siteURL."favicon.png")?>" rel="icon" type="image/x-icon">
     <title>Meme Racing Dot Net</title>
     <meta name="viewport" content="width=device-width, minimum-scale=0.5, maximum-scale=1.6, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <meta name="description" content="MemeRacing.net is a breakthrough bitcoin based playground where ingenuity, creativity, and a sense for what others will appreciate profits anyone willing to use them.">
     <meta name="keywords" content="free bitcoin, earn bitcoin, meme racing, meme, ideas, brainstorm, crowdsource">
     <meta name="robots" content="index, follow">
-    <link href="<?=auto_version($siteURL."bootstrap/css/bootstrap.min.css")?>" rel="stylesheet" media="screen">
-    <link href="<?=auto_version($siteURL."bootstrap/css/bootstrap-responsive.min.css")?>" rel="stylesheet" media="screen">
-    <link rel="stylesheet" type="text/css" media="all" href="<?=auto_version($siteURL."style.css")?>">
+    <link href="<?php echo auto_version($siteURL."bootstrap/css/bootstrap.min.css"); ?>" rel="stylesheet" media="screen">
+    <link href="<?php echo auto_version($siteURL."bootstrap/css/bootstrap-responsive.min.css"); ?>" rel="stylesheet" media="screen">
+    <link rel="stylesheet" type="text/css" media="all" href="<?php echo auto_version($siteURL."style.css"); ?>">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="<?=auto_version($siteURL."bootstrap/js/bootstrap.min.js")?>"></script>
-    <script type='text/javascript' src="<?=auto_version($siteURL."js/bitwitbet.js")?>"></script>
+    <script src="<?php echo auto_version($siteURL."bootstrap/js/bootstrap.min.js"); ?>"></script>
+    <script type='text/javascript' src="<?php echo auto_version($siteURL."js/bitwitbet.js"); ?>"></script>
     <!--[if lt IE 9]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -39,11 +39,15 @@ function auto_version($file)
 </head>
 <body>
 <?php
-    if(!$hide_debug && preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR']))
+    if(!$hide_debug && (
+    	preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR'])
+    	 || $_SERVER['SERVER_ADDR'] == "::1")
+    	 )
     {
         echo "<!-- /* ".print_r(get_defined_vars(),true)." */ -->";
     }
-    if(!preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR']) )
+    if(!( preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR'])
+    	 || $_SERVER['SERVER_ADDR'] == "::1") )
     {
         echo <<< GA
 <script type='text/javascript'>
@@ -63,19 +67,19 @@ GA;
     }
 ?>
 
-      <?=$notMailed?>
+      <?php echo $notMailed; ?>
     <header>
       <div class="masthead container">
-        <h3 class="mr-header">Meme Racing <small style='color:white'>Alpha</small><small class="pull-right bc-addr">Our bitcoin address: <?=$OUR_BTC_ADDR?></small></h3>
+        <h3 class="mr-header">Meme Racing <small style='color:white'>Alpha</small><small class="pull-right bc-addr">Our bitcoin address: <?php echo $OUR_BTC_ADDR; ?></small></h3>
         <div class="navbar navbar-inverse">
           <div class="navbar-inner gradient">
             <div class="container">
               <ul class="nav">
-                <li><a href="<?=$siteURL?>">Home</a></li>
-                <li><a href="<?=$siteURL?>prompts">Prompts</a></li>
-                <li><a href="<?=$siteURL?>faq">FAQ</a></li>
-                <li><a href="<?=$siteURL?>contact">Contact</a></li>
-                <?=$logout?>
+                <li><a href="<?php echo $siteURL; ?>">Home</a></li>
+                <li><a href="<?php echo $siteURL; ?>prompts">Prompts</a></li>
+                <li><a href="<?php echo $siteURL; ?>faq">FAQ</a></li>
+                <li><a href="<?php echo $siteURL; ?>contact">Contact</a></li>
+                <?php echo $logout; ?>
               </ul>
             </div>
           </div>

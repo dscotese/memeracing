@@ -1,4 +1,4 @@
-<?
+<?php
 $home = 1;
 $notMailed = "";
 session_start();
@@ -24,7 +24,7 @@ if(function_exists($fn))
     {
         $err = print_r($e,true);
         errLog($err);
-        if(preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR']) )
+        if(preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR'])  || $_SERVER['SERVER_ADDR'] == "::1")
         {
             $content = $err;
         }
@@ -45,25 +45,28 @@ include('header.php');
 
       <div class="hero">
         <div class="container">
-          <?php if(!function_exists($fn)) include('slideshow.html'); ?>
+          <?php if(!function_exists($fn))
+          {
+          	bwb_hero();
+          } ?>
         </div>
       </div>
 
       <div class="mr-field">
         <div id="main" class="container">
           <div id="content">
-<?php if( substr($_SERVER['SERVER_ADDR'],0,6) == '127x.0.' ) {
+<?php if( $_SERVER['SERVER_ADDR'] == '::1x' ) {
     $randTx = md5(time()).'b3eafb09757bcf7bb6dcc2e488b2e368';
 ?>
-            <form action='<?=$siteURL?>received' target='BCT' onsubmit='location.href="";'>
+            <form action='<?php echo $siteURL; ?>received' target='BCT' onsubmit='location.href="";'>
                 <input name='value' value='1001002'/>
-                <input type='hidden' name='transaction_hash' value='<?=$randTx?>' />
+                <input type='hidden' name='transaction_hash' value='<?php echo $randTx; ?>' />
                 <input type='hidden' name='input_address' value='1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW'/>
                 <input type='hidden' name='confirmations' value='0'/>
                 <input type='hidden' name='secret' value='2e5389693117e2634'/>
                 <input type='submit' value='Test Bet' class='btn' />
             </form><br/>
-            <a href='<?=$siteURL?>reset'>Reset</a> |
+            <a href='<?php echo $siteURL; ?>reset'>Reset</a> |
 <?php } ?>
             <?php if($fn != 'bwb_search') echo bwb_search(); ?>
 

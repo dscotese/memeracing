@@ -1,5 +1,6 @@
 <?php
-    include("../queries.php");
+	chdir("..");
+    include("queries.php");
 
     if(isset($_GET['p']))
     {
@@ -22,13 +23,13 @@ var cnttr = 0;
 step = isNaN(step) ? 0 : step;
 var state = 0;
 last = 0 == last ? 1000000 : last;
-var p1secret = '<?=getSecrets(1)?>';
+var p1secret = '<?php echo getSecrets(1); ?>';
 
 $(function()
 {
     if(window.name != "unittest")
     {
-        unittest = window.open("<?=$siteURL?>prompts","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>prompts","unittest");
     }
 
     cases = setupNext.toString().match(/case [0-9]+:.*/g);
@@ -150,7 +151,7 @@ function checkStep()
         {
             report("Level 1 Contest not found, retrying...");
             step = 35;
-            unittest = window.open("<?=$siteURL?>proposal/1","unittest");
+            unittest = window.open("<?php echo $siteURL; ?>proposal/1","unittest");
             return false;
         }
         break;
@@ -304,7 +305,7 @@ function setupNext()
     case 3: // Make the second prompt.
         makeInspire(1); break;
     case 4: // Visit the first prompt.
-        unittest = window.open("<?=$siteURL?>proposal/1","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>proposal/1","unittest");
         break;
     case 5: case 6: case 7: case 8: case 9: case 10: // (to case14): Add answers
     case 17: case 18: case 19: case 20: case 21: // (to case 21): Add answers
@@ -337,7 +338,7 @@ function setupNext()
         testBet(1000001,"Inv1","Investor 1");
         testBet(10000001,"Inv2","Investor 2");
         // Now visit the prompt while it's processing.
-        unittest = window.open("<?=$siteURL?>proposal/1","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>proposal/1","unittest");
         break;
     case 35: // Wait 2 seconds and then procced to the next step.
         window.setTimeout('proceed()',2000);
@@ -347,19 +348,19 @@ function setupNext()
         return bePlayer(1);
         break;
     case 37: // Vote as player 0 putting #3 in first.
-        unittest = window.open("<?=$siteURL?>vote_on/1/3175264","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>vote_on/1/3175264","unittest");
         break;
     case 38: // Be player 1 (this uses an actual login secret)
         return bePlayer(2);
         break;
     case 39: // Vote as player 1 putting #3 in first.
-        unittest = window.open("<?=$siteURL?>vote_on/1/3412675","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>vote_on/1/3412675","unittest");
         break;
     case 40: // Be player 2
         return bePlayer(3);
         break;
     case 41: // Vote as player 2 putting #3 in first.
-        unittest = window.open("<?=$siteURL?>vote_on/1/3542176","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>vote_on/1/3542176","unittest");
         break;
     case 42: case 44: case 46: // Be players 4, 5, and 6 (p=5, 6, and 7)
         return bePlayer(step/2 - 16);
@@ -379,13 +380,13 @@ function setupNext()
         return bePlayer((step-41)/2);
         break;
     case 52: case 54: case 56: // Vote #3 in second place.
-        unittest = window.open("<?=$siteURL?>vote_on/1/7326451","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>vote_on/1/7326451","unittest");
         break;
     case 57: // Set deadline to now (Hidden feature)
         return expediteContest(57,1,1,unittest.$("a[href*='contest']").attr('href'));
         break;
     case 58: // Go home to use Voting Instructions box.
-        unittest.location="<?=$siteURL?>logout";
+        unittest.location="<?php echo $siteURL; ?>logout";
         break;
     case 59: // Get voting instructions for player_0
         var frm = unittest.$("form input[value*='voting instructions']")[0].form;
@@ -397,7 +398,7 @@ function setupNext()
         cnttr = 13;
         break;
     case 61:
-        unittest.location = "<?=$siteURL?>proposal/1";
+        unittest.location = "<?php echo $siteURL; ?>proposal/1";
         break;
     case 62: // Add 83 more answers for a total of 99.
         if(cnttr < 98)
@@ -436,17 +437,17 @@ function setupNext()
             pretx = (15+counter);
             testBet(10000001 + 100*counter, pretx, counter);
         }
-        unittest.location = "<?=$siteURL?>proposal/1";
+        unittest.location = "<?php echo $siteURL; ?>proposal/1";
         break;
 
     case 66: // Just refresh proposal 1 until we see active contest 8.
         if(!unittest.$('h4').text().match(/Contest 7/))
         {
-            unittest.location = "<?=$siteURL?>proposal/1";
+            unittest.location = "<?php echo $siteURL; ?>proposal/1";
             step = 65;
             return true;
         }
-        unittest.location = "<?=$siteURL?>proposal/1";
+        unittest.location = "<?php echo $siteURL; ?>proposal/1";
         break;
 
     case 67: // Now Expedite 7 contests
@@ -457,13 +458,13 @@ function setupNext()
         expediteContest(67,6,1,unittest.location.href);
         expediteContest(67,7,1,unittest.location.href);
         expediteContest(67,8,1,unittest.location.href);
-        unittest.location = "<?=$siteURL?>proposal/1";
+        unittest.location = "<?php echo $siteURL; ?>proposal/1";
         return true;
         break;
     case 68: // And refresh proposal 1 until we see 7 links with "contest" in them
         if(unittest.$("a[href*='contest']").length != 7)
         {
-            unittest.location = "<?=$siteURL?>proposal/1";
+            unittest.location = "<?php echo $siteURL; ?>proposal/1";
             step = 67;
             return true;
         }
@@ -481,7 +482,7 @@ function setupNext()
 
 function expediteContest(cur,c,i,goto)
 { // http://localhost/memeracing/received?value=1000001&transaction_hash=Inv164d98a&secret=2e5389693117e2634
-    $.get("<?=$siteURL?>received?value=1000"+(("000"+c).substr(-3))+"&transaction_hash="
+    $.get("<?php echo $siteURL; ?>received?value=1000"+(("000"+c).substr(-3))+"&transaction_hash="
         + "x64d98add54e324565bcb4e3b006d7fd9b3eafb09757bcf7bb6dcc2e488b2e36&"
         + "input_address=1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW&confirmations=0&secret=2e5389693l17e2634",
         "",function(data, status)
@@ -491,7 +492,7 @@ function expediteContest(cur,c,i,goto)
                 report("Deadline not updated");
                 return false;
             }
-            if( cronWait(cur,"<?=$siteURL?>proposal/"+i,function(w)
+            if( cronWait(cur,"<?php echo $siteURL; ?>proposal/"+i,function(w)
                 {
                     return function()
                     {
@@ -538,21 +539,21 @@ function bePlayer(n)
     }
     if(n == 2) // Use secret
     {
-        $.get("<?=$siteURL?>js/unit_tests.js.php?p=2",function(data,stat)
+        $.get("<?php echo $siteURL; ?>js/unit_tests.js.php?p=2",function(data,stat)
         {
-            unittest = window.open("<?=$siteURL?>vote/"+data,"unittest");
+            unittest = window.open("<?php echo $siteURL; ?>vote/"+data,"unittest");
         });
     }
     else
     {
-        unittest = window.open("<?=$siteURL?>vote/?p="+n,"unittest");
+        unittest = window.open("<?php echo $siteURL; ?>vote/?p="+n,"unittest");
     }
     return true;
 }
 
 function logout(page)
 {
-    unittest = window.open("<?=$siteURL?>logout","unittest");
+    unittest = window.open("<?php echo $siteURL; ?>logout","unittest");
 }
 
 function noVote(contest, page)
@@ -563,7 +564,7 @@ function noVote(contest, page)
         report("No new order");
         return;
     }
-    unittest = window.open("<?=$siteURL?>vote_on/"+contest+"/"+newOrder, "unittest");
+    unittest = window.open("<?php echo $siteURL; ?>vote_on/"+contest+"/"+newOrder, "unittest");
 }
 
 function checkFirst(n,page)
@@ -599,7 +600,7 @@ function testBet(amt, pretx, name)
 {
     var misc = "&input_address=1CyuAfo4r6KzspipMoXkN8ReaKf797QrPW&confirmations=0&secret=2e5389693117e2634";
     var txid = (pretx + '64d98add54e324565bcb4e3b006d7fd9b3eafb09757bcf7bb6dcc2e488b2e368').substr(0,64);
-    var url = "<?=$siteURL?>received?value="+amt+"&transaction_hash="+txid+misc;
+    var url = "<?php echo $siteURL; ?>received?value="+amt+"&transaction_hash="+txid+misc;
     $.get(url,function(c)
     {
         return function(isOK,stat)
@@ -615,7 +616,7 @@ function reserve(c,n,x)
     if(unittest.$("form#reserver").length == 0)
     {
         report("Going to prompt "+c+" to reserve answers...");
-        unittest = window.open("<?=$siteURL?>proposal/"+c,"unittest");
+        unittest = window.open("<?php echo $siteURL; ?>proposal/"+c,"unittest");
         step = step - 1;
         return;
     }
@@ -636,7 +637,7 @@ function addEntry(e, a)
     if(!frm || !frm.email)
     {
         report("Going to prompt 1.");
-        unittest = window.open("<?=$siteURL?>proposal/1","unittest");
+        unittest = window.open("<?php echo $siteURL; ?>proposal/1","unittest");
         step = step - 1;
         return true;
     }

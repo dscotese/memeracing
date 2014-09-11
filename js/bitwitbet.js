@@ -32,7 +32,7 @@ $(document).ready(function()
     $("textarea,input[type='email'],input[type='search'],input[type='text']").each(function()
     {
         this.inx = this.value;
-        this.onfocus=function() 
+        this.onfocus=function()
         {
             this.value = (this.value == this.inx) ? '' : this.value;
         };
@@ -41,7 +41,7 @@ $(document).ready(function()
             this.value = (this.value == '') ? this.inx : this.value;
         }
     } );
-    
+
     // Add counters to text area inputs
     if($('textarea').length > 0)
     {
@@ -68,13 +68,15 @@ $(document).ready(function()
             $('textarea').val($(this).text());
             countDiv.text(140-$(this).text().length);
             $("input[name='edit']").val(this.id.substr(1));
-            $('html, body').animate({ 
-               scrollTop: $(document).height()-$(window).height()}, 
+            $("input[name='btc_addr']").prop('disabled', true)
+            	.val("BTC Address can't be edited");
+            $('html, body').animate({
+               scrollTop: 450 + $('#reserver').height()},
                500
             );
         });
     }
-    
+
     // Bury instructions in "Hover for Help"
     $('.inx').each(function()
     {
@@ -114,5 +116,5 @@ $(document).ready(function()
             }(this), delay);
         }
     });
-    
+
 } );

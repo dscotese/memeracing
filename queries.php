@@ -4,8 +4,8 @@
 global $ranking_debug;
 $MAXSLOTS=99;
 
-include('scripts/mysql_djs.php');
 include_once("config.php");
+include('scripts/mysql_djs.php');
 
 // Define a global object to hold non-fatal SQL errors
 // ---------------------------------------------------
@@ -24,7 +24,7 @@ if( '' == $db->scalar("SHOW TABLES LIKE 'backing'") )
 
 // Debug on local installations (127.0.0...), for testing
 // ------------------------------------------------------
-if(preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR']) )
+if(preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR'])  || $_SERVER['SERVER_ADDR'] == "::1")
 {
     error_reporting(E_ERROR|E_WARNING|E_PARSE);
     if( $_GET['test'] > '')
@@ -249,7 +249,7 @@ function getInspires($where = "")
         FROM inspire i LEFT JOIN backing b ON b.inspire_id=i.inspire_id AND b.entry_id IS NULL
             LEFT JOIN contest c ON c.inspire_id=i.inspire_id
         $where
-        GROUP BY i.inspire_id";
+        GROUP BY i.inspire_id ORDER BY invested DESC, i.inspiration";
     return $db->result($sql);
 }
 
@@ -339,6 +339,10 @@ function storeAnswer($answer, $email,$iid, $addr)
                     SET entry='$p', hash='$hash', email=$eid";
 
             $db->sql_query("$sql WHERE slot IS NULL AND entry_id=".$entry_id);
+            if($db->sql_affectedrows() == 0)
+            {
+            	return 'Entry has already been reserved.';
+            }
         }
         else
         {

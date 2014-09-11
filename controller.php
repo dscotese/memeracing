@@ -143,7 +143,7 @@ function bwb_sendAll()
             $trace = $e->getTrace();
             $err = "$msg ($code) from ".$trace[0]['function'].", line ".$trace[0]['line'];
             errLog($err);
-            return preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR'])
+            return (preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR']) || $_SERVER['SERVER_ADDR'] == "::1")
                 ? $err
                 : "Got an exception which has been logged.";
         }
@@ -675,6 +675,7 @@ function sendPlayerMail($to, $subj, $msg)
     $body = "<h3>Hi, $name</h3>$msg<br/><br/>
              - The Meme Racing Team";
     if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.'
+        || $_SERVER['SERVER_ADDR'] == "::1"
         || preg_match("/^Player_.*memeracing.net$/",$to) )
     {
         $notMailed .= "<div class='notice'>
@@ -994,17 +995,24 @@ function bwb_respond()
         }
         if( $newa = storeAnswer($answer, $email, $inspire_id, $addr) )
         {
-            $entries = getEntries($inspire_id);
-            $ret = "Your answer has been stored.";
-            if(!isset($_SESSION["myAnswers"]))
+            if(is_numeric($newa))
             {
-                $_SESSION['myAnswers'] = array();
+                $entries = getEntries($inspire_id);
+                $ret = "Your answer has been stored.";
+                if(!isset($_SESSION["myAnswers"]))
+                {
+                    $_SESSION['myAnswers'] = array();
+                }
+                if($_POST['edit'] == '' && !in_array($newa,$_SESSION['myAnswers']))
+                {
+                    $_SESSION["myAnswers"][] = $newa;
+                }
+                $_SESSION['email'] = $email;
             }
-            if($_POST['edit'] == '' && !in_array($newa,$_SESSION['myAnswers']))
+            else
             {
-                $_SESSION["myAnswers"][] = $newa;
+                $ret = notice("Apparently, your answer has already been reserved.");
             }
-            $_SESSION['email'] = $email;
         }
         else
         {
