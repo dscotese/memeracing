@@ -79,6 +79,16 @@ function do_cron()
     }
 }
 
+function bwb_hero()
+{
+    bwb_slideshow();
+}
+
+function bwb_slideshow()
+{
+    include('slideshow.html');
+}
+
 function bwb_payout()
 {
     $ret = isPost("sendAll");

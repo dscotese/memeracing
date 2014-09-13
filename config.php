@@ -21,7 +21,8 @@ if (get_magic_quotes_gpc()) {
     }
     unset($process);
 }
-if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' )
+
+if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' || $_SERVER['SERVER_ADDR'] == "::1")
 {
     $dbhost   = "localhost";
     $dbuser   = "root";
