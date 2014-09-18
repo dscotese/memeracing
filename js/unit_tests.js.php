@@ -140,7 +140,7 @@ function checkStep()
         }
         break;
     case 16: // Make sure we got a slot
-        if(!unittest.$("div.inx").text().match(/essential liberty/))
+        if(!unittest.$("div#bd0101").text().match(/essential liberty/))
         {
             report("Reservation of answer(1) not indicated");
             return false;
@@ -473,7 +473,9 @@ function setupNext()
         unittest.location = unittest.$("a[href*='contest']")[6].href;
         break;
 
-    case 70: // back the level 1 winners to run a second level contest.
+    case 70: // Back the level 1 winners to run a second level contest.
+    case 71: // Back 99 answers to check for outbidding.
+    case 72: // Back 99 prompts to check for outbidding.
 
     default: debug("End of tests");
     }

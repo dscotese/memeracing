@@ -150,6 +150,30 @@ span.note {
     color: red;
 }
 
+/* Overlays */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    filter:alpha(opacity=50);
+    -moz-opacity:0.5;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;
+    z-index: 10000;
+    display: none;
+}
+
+input.betCalc {
+    width: 75px;
+}
+
+span.timer {
+    font-size: 14pt;
+}
+
 /* register prompt forms */
 form.regPrompt {
 }

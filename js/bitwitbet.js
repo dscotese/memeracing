@@ -29,12 +29,48 @@ $(document).ready(function()
     {
         window.setTimeout('opener.proceed()',100);
     }
+
+    if($('span.timer').length>0)
+    {
+        var startMillis = new Date();
+        window.setInterval(function()
+        {
+            var rightNow = new Date();
+            var sinceMillis = rightNow - startMillis;
+            var sinceSecs = sinceMillis / 1000;
+            $('span.timer').each(function()
+            {
+                var duration = this.getAttribute('mins') * 60;
+                var minsLeft = Math.floor((duration - sinceSecs)/60);
+                var secsLeft = Math.floor((duration - sinceSecs) % 60);
+                if(sinceSecs + 60 > duration)
+                {
+                    if(this.parentNode.id.substr(2,2) == '00')
+                    {
+                        $(this.parentNode).html("<span class='note'>The slot has expired;"+
+                            " Please reload if you would like to back this prompt or"+
+                            " one of its answers.</span>");
+                    }
+                    else
+                    {
+                        $(this.parentNode).html("");
+                    }
+                }
+                else
+                {
+                    $(this).text(minsLeft+":"+("0"+secsLeft).slice(-2));
+                }
+            });
+        },100);
+    }
+
     $("textarea,input[type='email'],input[type='search'],input[type='text']").each(function()
     {
         this.inx = this.value;
+        this.def = this.getAttribute('def');
         this.onfocus=function()
         {
-            this.value = (this.value == this.inx) ? '' : this.value;
+            this.value = (this.value == this.inx) ? this.def : this.value;
         };
         this.onblur=function()
         {
@@ -69,7 +105,7 @@ $(document).ready(function()
             countDiv.text(140-$(this).text().length);
             $("input[name='edit']").val(this.id.substr(1));
             $("input[name='btc_addr']").prop('disabled', true)
-            	.val("BTC Address can't be edited");
+                .val("BTC Address can't be edited");
             $('html, body').animate({
                scrollTop: 450 + $('#reserver').height()},
                500
@@ -94,6 +130,7 @@ $(document).ready(function()
         this.tog = 0;
         this.sTog = 0;
     });
+
     $('.inx').hover(function()
     {
         var delay = 200;
@@ -117,4 +154,16 @@ $(document).ready(function()
         }
     });
 
+    // Calcuulate bets
+    $('input.betCalc').keyup(function()
+    {
+        this.value = this.value.substr(0,6);
+        var amt = !isNaN(parseFloat(this.value))
+            ? this.id/100000000+(1*this.value) : "?????";
+        if(!isNaN(amt))
+        {
+            amt = amt.toFixed(8);
+        }
+        $('span#bc'+this.id).text(amt);
+    });
 } );

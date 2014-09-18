@@ -422,7 +422,15 @@ function findLowBid(&$slot)
         FROM inspire INNER JOIN backing USING(inspire_id)
         GROUP BY inspire_id
         ORDER BY cap, created LIMIT 1";
-    return $db->scalar($sql);
+    if($lowBid = $db->scalar($sql))
+    {
+		$slot = $lowBid['slot'];
+		return $lowBid['inspire_id'];
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 function getEntry($entry_id)

@@ -267,7 +267,7 @@ function bwb_test()
     return "<script type='text/javascript' src='$tests'></script>
     <div style='float:right' id='testlinks'></div>
         <span id='debug'></span><br/>
-        <span id='problems' style='color:red; font-weight:bold;'></span>";
+        <span id='problems' style='color:red; font-weight:bold;height:200px'></span>";
 }
 
 function bwb_faq()
@@ -709,7 +709,7 @@ function bwb_proposal()
     $entries = getEntries($inspire_id);
     $ret = isPost('respond');
 
-    $ret .= start_timer( $inspire_id,0,'to back this prompt' );
+    $ret .= start_timer( $inspire_id,0,'back this prompt' );
 
     $inspire = getInspire($inspire_id);
     extract($inspire);
@@ -777,9 +777,8 @@ function showEntryTable($entries)
     }
     $ret .= "<p class='inx'>
         If you would like to back one of these answers, click the reserve button.
-        This will provide you with a four-digit code that you must use as the last
-        four digits of the amount of bitcoin you send to our address ($OUR_BTC_ADDR).  You will have
-        15 minutes to place your wager.  If you place it after the 15 minutes, you may
+        Instructions will appear at the top of the next page.  You will have
+        15 minutes to send in the bitcoin.  If you send it after the 15 minutes, you may
         be backing a different answer.  You can always come back to this page to
         reserve this answer again, if it's still here.
     </p>
@@ -1055,7 +1054,7 @@ function bwb_reserve()
         $inspiration = "<a href='{$siteURL}proposal/$inspire_id'>"
             .htmlspecialchars($inspire['inspiration'])."</a>";
         $ret = start_timer($inspire_id, $entry_to_reserve,
-                "to back '$entry_text' as an answer to '$inspiration'", $entry_text);
+                "back '$entry_text' as an answer to '$inspiration'", $entry_text);
     }
     return $ret;
 }
@@ -1074,15 +1073,13 @@ function start_timer($iid, $eid, $goal, $answer = '')
 
     $for = $eid > 0 ? str_replace("'","&apos;",strip_tags($answer)) : "this prompt";
 
-    $ret = "You have 15 minutes starting at ".date(DATE_RFC822)
-        ." to send an amount ending in $slot (eg 1.0500$slot) to our bitcoin address ($OUR_BTC_ADDR)
-        if you would like $goal.<br/>
-        <strong>If you're backing a prompt, the 4 digit code starts with two zeroes.
-            If you're backing a response, the code will be greater than 0099.
-            Bitcoins are paid back to the address from which they came.</strong>
-            <a href='http://satoshidice.com'>Satoshi Dice</a> has a mechanism
-            you can use to test this.";
-    return "<div class='inx' inx='Code for $for: $slot'>$ret</div>";
+    $ret = "<div id='bd$slot'><br/>To $goal with <input type='text' id='$slot' class='betCalc'
+    	def='0.0000' value='how many?'/> BTC,
+    Send <span id='bc$slot'>0.0000$slot</span> to to our bitcoin address ($OUR_BTC_ADDR).<br/>
+    Time left: <span class='timer' mins='15'></span> Please reload if you can't pay before this timer runs out.<br/>
+        Bitcoins are paid back to the address from which they came.<br/>
+        <strong>Only use private wallets to back prompts and answers!</strong></div>";
+    return $ret;
 };
 
 function find_slot($iid, $eid)
