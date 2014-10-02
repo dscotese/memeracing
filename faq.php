@@ -47,7 +47,7 @@
 	The prompts that have no backing are listed alphabetically.  They are ordered first by the
 	amount of backing they have, and then alphabetically.  If you'd like to see a prompt higher
 	in the list, back it!  The prompt with the most backing is always at the top, and then the
-	one with the second most, tehn the third, etc., all the way on down to those with no backing.
+	one with the second most, then the third, etc., all the way on down to those with no backing.
 </li>
 <li><h3>How do I earn bitcoin without spending any?</h3>
     <ul><li>Choose a prompt that you think will inspire many people and click it.</li>
