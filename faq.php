@@ -43,6 +43,12 @@
     collected into batches of seven, and the seven respondents are
     given the chance to put them in order from best to worst.  The website takes that
     input and processes it to identify the best of those seven.</li>
+<li><h3>Why aren't the prompts listed alphabetically like the answers?</h3>
+	The prompts that have no backing are listed alphabetically.  They are ordered first by the
+	amount of backing they have, and then alphabetically.  If you'd like to see a prompt higher
+	in the list, back it!  The prompt with the most backing is always at the top, and then the
+	one with the second most, tehn the third, etc., all the way on down to those with no backing.
+</li>
 <li><h3>How do I earn bitcoin without spending any?</h3>
     <ul><li>Choose a prompt that you think will inspire many people and click it.</li>
     <li>Create an answer to the prompt that will be judged as better than others and
