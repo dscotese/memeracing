@@ -1,6 +1,14 @@
 <?php
 
-$reservation = "15 minute";
+// Reservation is how long we leave a slot open before reusing it.
+// The amount of time the user is given is hardcoded to 15 minutes.
+// The extra 45 minutes is because blockchain.info has to call the callback
+//  at least once to lock in the backing, and we want to give it enough time.
+// A whole hour might be overkill since the target is 10 minutes, but
+// there is little reason not to be overly cautious here.
+// --------------------------------------------------------------------------
+$reservation = "1 hour";
+
 include("process.php");
 
 if(getLastCron() < time() - 10)
