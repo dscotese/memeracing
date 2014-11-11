@@ -521,7 +521,7 @@ function bwb_received()
     $d7fd9b3 = '';
     $secret = '';
     extract($_GET,EXTR_IF_EXISTS);
-    if(($secret == '2e5389693117e2634' || $d7fd9b3 == 'eafb09757bcf') && $value > 100000)
+    if(($secret == '2e5389693117e2634' || $d7fd9b3 == 'eafb09757bcf') && $value > 9999)
     {
         $ret = checkBet($transaction_hash, $value);
         if($ret == 2)
