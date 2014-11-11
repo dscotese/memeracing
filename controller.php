@@ -511,7 +511,7 @@ function sendBTCTo($dAmt, $destAddr, $cid = 'null')
 // Use this as the callback to collect Transactions
 // that need to be processed by do_cron.
 // Test with: localhost/memeracing/received?value=100002&transaction_hash=ccd04ee4382a1d16db095fdfc9f425a0b3eafb09757bcf7bb6dcc2e488b2e368&input_address=abc123&confirmations=3&secret=notso
-// ------------------------------------------------
+// -------------------------------------------------
 function bwb_received()
 {
     $value = '';
