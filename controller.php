@@ -3,10 +3,13 @@
 $reservation = "15 minute";
 include("process.php");
 
-if(getLastCron() < time() - 1)
+if(getLastCron() < time() - 10)
 {
-    do_cron();
     setLastCron();
+    // Have the user make another request:
+    header("Location: ".$_SERVER['REQUEST_URI']);
+    do_cron();
+    die();
 }
 
 function do_cron()
@@ -15,7 +18,7 @@ function do_cron()
     {
         foreach($who as $needAddr)
         {
-            errLog("No addr for $needAdd");
+            errLog("No addr for $needAddr");
         }
     }
 
@@ -1074,8 +1077,8 @@ function start_timer($iid, $eid, $goal, $answer = '')
     $for = $eid > 0 ? str_replace("'","&apos;",strip_tags($answer)) : "this prompt";
 
     $ret = "<div id='bd$slot'><br/>To $goal with <input type='text' id='$slot' class='betCalc'
-    	def='0.0000' value='how many?'/> BTC,
-    Send <span id='bc$slot'>0.0000$slot</span> to to our bitcoin address ($OUR_BTC_ADDR).<br/>
+        def='0.0000' value='how many?'/> BTC,
+    Send <span id='bc$slot'>0.0000$slot</span> to our bitcoin address ($OUR_BTC_ADDR).<br/>
     Time left: <span class='timer' mins='15'></span> Please reload if you can't pay before this timer runs out.<br/>
         Bitcoins are paid back to the address from which they came.<br/>
         <strong>Only use private wallets to back prompts and answers!</strong></div>";
