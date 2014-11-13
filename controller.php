@@ -11,7 +11,7 @@ $reservation = "1 hour";
 
 include("process.php");
 
-if(getLastCron() < time() - 10)
+if(getLastCron() < time() - 10 && count($_POST) == 0)
 {
     setLastCron();
     // Have the user make another request:
@@ -351,7 +351,7 @@ function bwb_vote()
 
 function oneTimeLogin($player)
 {
-    global $siteURL;
+    global $siteURL, $domain;
     $ret = false;
     if($player)
     {
@@ -363,7 +363,7 @@ function oneTimeLogin($player)
         storeSecret($player_id,$secret);
 
         $ret = "Here is your new link to
-            <a href='{$siteURL}vote/$secret'>meme racing</a>";
+            <a href='{$domain}{$siteURL}vote/$secret'>meme racing</a>";
     }
     return $ret;
 }

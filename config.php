@@ -52,6 +52,7 @@ else
     $dbuser   = "eminizer_mracing";
     $dbpasswd = "F6XFA@A906^11SH33";
     $siteURL = "/";
+    $domain = "http://memeracing.net";
     $fnElemNum = 0;
     $docroot = "/home/eminizer/public_html/memeracing.net";
     $dbname   = "eminizer_memeracing";
