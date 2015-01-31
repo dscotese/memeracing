@@ -249,7 +249,7 @@ function getInspires($where = "")
         FROM inspire i LEFT JOIN backing b ON b.inspire_id=i.inspire_id AND b.entry_id IS NULL
             LEFT JOIN contest c ON c.inspire_id=i.inspire_id
         $where
-        GROUP BY i.inspire_id ORDER BY invested DESC, i.inspiration";
+        GROUP BY i.inspire_id ORDER BY invested DESC, nume DESC, i.inspiration";
     return $db->result($sql);
 }
 
@@ -318,6 +318,10 @@ function storePrompt($prompt)
 
 function storeAnswer($answer, $email,$iid, $addr)
 {
+    if('Enter your email address' == $email)
+    {
+        return 'No email address entered.';
+    }
     global $db;
     $eid = emailID($email);
     $p = dbQuote($answer);
@@ -341,7 +345,7 @@ function storeAnswer($answer, $email,$iid, $addr)
             $db->sql_query("$sql WHERE slot IS NULL AND entry_id=".$entry_id);
             if($db->sql_affectedrows() == 0)
             {
-            	return 'Entry has already been reserved.';
+                return 'Entry has already been reserved.';
             }
         }
         else
@@ -424,13 +428,13 @@ function findLowBid(&$slot)
         ORDER BY cap, created LIMIT 1";
     if($lowBid = $db->scalar($sql))
     {
-		$slot = $lowBid['slot'];
-		return $lowBid['inspire_id'];
-	}
-	else
-	{
-		return 0;
-	}
+        $slot = $lowBid['slot'];
+        return $lowBid['inspire_id'];
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 function getEntry($entry_id)
