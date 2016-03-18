@@ -578,12 +578,14 @@ function bwb_prompts($tag = true)
 
     $ret .= <<< PROPOSE
 <br/><br/>
-<div class='prop'>
+<div class='prop'><a name='new-prompt'></a>
     <form class='regPrompt text-center' method='post' onsubmit='return validate_proposal(this);'>
         <input type='hidden' name='edit'/>
         <textarea name='prompt' style='width:350px;' class='text-center'/>Enter your prompt here</textarea><br/>
         <input type='submit' value='Register My Prompt' class='btn btn-primary'
-            title='After submitting, you can click your\nunderlined prompt to make edits.'/>
+            title='After submitting, you can click your\nunderlined prompt to make edits.
+
+If you or anyone backs your prompt,\nit will stick around a lot longer.'/>
     </form><br/><br/>
     <form class='form-inline' method='post'>
         <input type='submit' value='Send voting instructions' class='btn btn-inverse'/> to
@@ -953,8 +955,12 @@ function bwb_search($isMain = false)
     global $siteURL;
     $val = isset($_POST['terms']) ? $_POST['terms'] : 'Search for something';
     $ret = "<form action='{$siteURL}search' method='get'>
-            <input type='search' maxlength='20' name='terms' value='$val' size='20'/><br/>
-            <input type='submit' class='btn btn-primary' value='Find Memes'/>
+            <input type='search' maxlength='20' name='terms' value='$val' size='20'/>
+            <input type='submit' class='btn btn-primary' value='Find Memes'
+                style='margin-top:-10px'/><br/>
+            <input type='submit' title='Visit the form at the bottom of the Prompt page.'
+                onclick='location.href=\"http://localhost/memeracing/prompts#new-prompt\";return false;'
+                class='btn btn-primary' value='Add a Prompt'/>
         </form>";
     if(!$isMain)
     {
