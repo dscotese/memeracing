@@ -1,5 +1,5 @@
 <?php
-	chdir("..");
+    chdir("..");
     include("queries.php");
 
     if(isset($_GET['p']))
@@ -58,11 +58,15 @@ function report(str)
     $("#problems").append("("+step+")"+str + "<br/>");
 }
 
+// proceed() is called by the mail window (called "unittest")
+// as specified in the $(document).ready(function()...)
+// in bitwitbet.js.
+// ----------------------------------------------------------
 function proceed()
 {
     if(++cnttr > 200)
     {
-        alert("Stopping because cnttr is at 100");
+        alert("Stopping because cnttr is over 200");
         return;
     }
 
@@ -97,6 +101,19 @@ function proceed()
     }
 }
 
+// Setting up a step usually involves reloading the unittest
+// window, which then calls proceed(), which calls checkStep
+// to see if a problem needs to be reported.
+//
+// If we are waiting for a timer of some sort (see do_cron()),
+// then setupNext will do a delay, calling proceed() after the
+// delay, at which point checkStep will try again to verify
+// that it has waited long enough, and decrease the step if not.
+//
+// checkStep, case 36 is a good example, where it sets step
+// back to 35 to trigger setupNext (case 35) to wait another
+// 5 seconds and try again.
+// -------------------------------------------------------------
 function checkStep()
 {
     debug("Checking step "+step);
@@ -275,6 +292,18 @@ function checkStep()
             return false;
         }
         break;
+
+    case 67: // Check for Contest 7
+        if(!unittest.$('h4').text().match(/Contest 7/))
+        {
+            report("Contest 7 not found, retrying...");
+            step = 66;
+            unittest = window.open("<?php echo $siteURL; ?>proposal/1","unittest");
+            return false;
+        }
+        unittest.location = "<?php echo $siteURL; ?>proposal/1";
+        break;
+
     case 69: // Verify the last winner
         if(!unittest.$("a[href*='contest']")[6].innerHTML.match(/It and The more Robbing/))
         {
@@ -289,12 +318,21 @@ function checkStep()
             return false;
         }
         break;
-
+    case 71: // Verify that old, unbacked prompt (#2) has been removed.
+        if(unittest.$("a:contains('dog')").length > 0)
+        {
+            report("Dog food has not disappeared.");
+            return false;
+        }
+        break;
     default: break;
     }
     return true;
 }
 
+// If a step completes, setupNext is called to prepare
+// for the next one.
+// ---------------------------------------------------
 function setupNext()
 {
     debug("Setting up after step "+step);
@@ -340,8 +378,8 @@ function setupNext()
         // Now visit the prompt while it's processing.
         unittest = window.open("<?php echo $siteURL; ?>proposal/1","unittest");
         break;
-    case 35: // Wait 2 seconds and then procced to the next step.
-        window.setTimeout('proceed()',2000);
+    case 35: // Wait 10 seconds to checkStep 36 again.
+        window.setTimeout('proceed()',10000);
         break;
     case 36: // Check for "Active Contests" and login as player 0
         // Now vote for players 0, 1, and 2 to make player 5 win. (p=1 is player 0)
@@ -440,14 +478,8 @@ function setupNext()
         unittest.location = "<?php echo $siteURL; ?>proposal/1";
         break;
 
-    case 66: // Just refresh proposal 1 until we see active contest 8.
-        if(!unittest.$('h4').text().match(/Contest 7/))
-        {
-            unittest.location = "<?php echo $siteURL; ?>proposal/1";
-            step = 65;
-            return true;
-        }
-        unittest.location = "<?php echo $siteURL; ?>proposal/1";
+    case 66: // Wait 15 seconds to checkStep 67 again.
+        window.setTimeout('proceed()',15000);
         break;
 
     case 67: // Now Expedite 7 contests
@@ -461,16 +493,19 @@ function setupNext()
         unittest.location = "<?php echo $siteURL; ?>proposal/1";
         return true;
         break;
-    case 68: // And refresh proposal 1 until we see 7 links with "contest" in them
+
+    case 68: // And refresh proposal 1 until we can visit contest 7 results.
         if(unittest.$("a[href*='contest']").length != 7)
         {
             unittest.location = "<?php echo $siteURL; ?>proposal/1";
             step = 67;
             return true;
         }
-        break;
-    case 69: // Visit contest 7 results
         unittest.location = unittest.$("a[href*='contest']")[6].href;
+        break;
+
+    case 69: // Visit Prompts to make sure clearSpam removed prompt 2.
+        unittest.location = "<?php echo $siteURL; ?>prompts";
         break;
 
     case 70: // Back the level 1 winners to run a second level contest.
@@ -482,6 +517,10 @@ function setupNext()
     return true;
 }
 
+// expediteContest is broken because it checks for the h3 Completed,
+// but that is always present because of the first contest.
+// Find a better way to establish that the contests have ended.
+// -----------------------------------------------------------------
 function expediteContest(cur,c,i,goto)
 { // http://localhost/memeracing/received?value=1000001&transaction_hash=Inv164d98a&secret=2e5389693117e2634
     $.get("<?php echo $siteURL; ?>received?value=1000"+(("000"+c).substr(-3))+"&transaction_hash="

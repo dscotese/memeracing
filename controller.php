@@ -11,12 +11,24 @@ $reservation = "1 hour";
 
 include("process.php");
 
-if(getLastCron() < time() - 10 && count($_POST) == 0)
+if(getLastCron() < time() - CRONSEC && count($_POST) == 0)
 {
+    // Not putting setLastCron first leads to infinite redirect.
+    // ---------------------------------------------------------
     setLastCron();
+
     // Have the user make another request:
-    header("Location: ".$_SERVER['REQUEST_URI']);
-    do_cron();
+    global $ranking_debug;
+    if($ranking_debug)
+    {
+        do_cron();
+        header("Location: ".$_SERVER['REQUEST_URI']);
+    }
+    else
+    {
+        header("Location: ".$_SERVER['REQUEST_URI']);
+        do_cron();
+    }
     die();
 }
 
@@ -28,6 +40,14 @@ function do_cron()
         {
             errLog("No addr for $needAddr");
         }
+    }
+
+    // Remove unbacked prompts and zero-backing every 4 hours
+    // ------------------------------------------------------
+    if(($glcs = getLastCron('spamChk')) < time() - SPAMSEC)
+    {
+        clearSpam();
+        setLastCron('spamChk');
     }
 
     // Check to see if any prompt has at least 10 backed entries
@@ -585,7 +605,7 @@ function bwb_prompts($tag = true)
         <input type='submit' value='Register My Prompt' class='btn btn-primary'
             title='After submitting, you can click your\nunderlined prompt to make edits.
 
-If you or anyone backs your prompt,\nit will stick around a lot longer.'/>
+If anyone (even you!) backs your prompt or adds an answer,\nit will stick around a lot longer.'/>
     </form><br/><br/>
     <form class='form-inline' method='post'>
         <input type='submit' value='Send voting instructions' class='btn btn-inverse'/> to

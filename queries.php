@@ -34,7 +34,6 @@ if(preg_match('/^127\.0\./', $_SERVER['SERVER_ADDR'])  || $_SERVER['SERVER_ADDR'
 
 function setup_db()
 {
-    global $db;
     $sql[] = "CREATE TABLE entry  (
         entry_id    INT(11) AUTO_INCREMENT NOT NULL,
         inspire_id  INT(11) NULL,
@@ -153,10 +152,7 @@ function setup_db()
         PRIMARY KEY(player_id, contest_id),
         INDEX idx_contest(contest_id) )";
 
-    foreach($sql as $s)
-    {
-        $db->sql_query($s);
-    }
+    doQueryArray($sql);
 }
 
 function dbQuote($raw)
@@ -583,19 +579,43 @@ function getBackers($cid)
         WHERE b.tx_id IS NOT NULL AND c.contest_id=$cid AND b.entry_id IS NULL");
 }
 
-function getLastCron()
+function getLastCron($tick='Cron')
 {
     global $db;
 
-    return $db->scalar("SELECT cfg_value FROM config WHERE cfg_name='Last Cron'");
+    return $db->scalar("SELECT cfg_value FROM config WHERE cfg_name='Last $tick'");
 }
 
-function setLastCron()
+function setLastCron($tick='Cron')
 {
     global $db;
 
     $db->sql_query("REPLACE INTO config(cfg_name, cfg_value)
-        VALUES ('Last Cron',UNIX_TIMESTAMP(NOW()))");
+        VALUES ('Last $tick',UNIX_TIMESTAMP(NOW()))");
+}
+
+function clearSpam()
+{
+    global $db;
+    $sql[] = "DELETE b FROM inspire i LEFT JOIN entry e USING(inspire_id)
+            LEFT JOIN backing b USING(inspire_id)
+        WHERE e.inspire_id IS NULL AND b.amount = 0
+            AND b.ts < NOW() - INTERVAL ".RESERVE_INTERVAL;
+    $sql[] = "DELETE i FROM inspire i LEFT JOIN entry e USING(inspire_id)
+            LEFT JOIN backing b USING(inspire_id)
+        WHERE e.inspire_id IS NULL AND b.inspire_id IS NULL
+            AND i.created < NOW() - INTERVAL ".ENTRY_INTERVAL;
+
+    doQueryArray($sql);
+}
+
+function doQueryArray($sql)
+{
+    global $db;
+    foreach($sql as $s)
+    {
+        $db->sql_query($s);
+    }
 }
 
 function findTx($tx)
@@ -793,7 +813,6 @@ function getBettors($cid)
 
 function recordRace($wtol,$cid)
 {
-    global $db;
     $sets = array();
     foreach(array('first','second','third','fourth','fifth','sixth','seventh') as $i => $field)
     {
@@ -807,10 +826,7 @@ function recordRace($wtol,$cid)
         SET level = level-1
         WHERE contest_id=$cid AND entry_id != ".$wtol[0];
 
-    foreach($sql as $s)
-    {
-        $db->sql_query($s);
-    }
+    doQueryArray($sql);
 }
 
 function logPay($dAmt, $destAddr, $contest_id = 'null')
