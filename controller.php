@@ -979,7 +979,7 @@ function bwb_search($isMain = false)
             <input type='submit' class='btn btn-primary' value='Find Memes'
                 style='margin-top:-10px'/><br/>
             <input type='submit' title='Visit the form at the bottom of the Prompt page.'
-                onclick='location.href=\"http://localhost/memeracing/prompts#new-prompt\";return false;'
+                onclick='location.href=\"{$siteURL}prompts#new-prompt\";return false;'
                 class='btn btn-primary' value='Add a Prompt'/>
         </form>";
     if(!$isMain)
