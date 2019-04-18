@@ -47,7 +47,7 @@ class sql_db
 
         if($this->persistency)
         {
-            $this->db_connect_id = @mysql_pconnect($this->server, $this->user, $this->password);
+            $this->db_connect_id = @mysqli_connect('p:'.$this->server, $this->user, $this->password, $this->dbname);
         }
         else
         {
@@ -55,7 +55,7 @@ class sql_db
         }
         if($this->db_connect_id)
         {
-            if($database != "")
+            if($database != "" && false)
             {
                 $this->dbname = $database;
                 $dbselect = @mysql_select_db($this->dbname);
@@ -221,11 +221,12 @@ class sql_db
         }
         if($query_id)
         {
-            unset($this->rowset[$query_id]);
-            unset($this->row[$query_id]);
-            while($this->rowset[$query_id] = @mysql_fetch_array($query_id))
+#            unset($this->rowset[$query_id]);
+#            unset($this->row[$query_id]);
+            $result = array();
+            while($rowset = @mysqli_fetch_array($query_id))
             {
-                $result[] = $this->rowset[$query_id];
+                $result[] = $rowset;
             }
             return $result;
         }
@@ -292,7 +293,7 @@ class sql_db
     function sql_nextid(){
         if($this->db_connect_id)
         {
-            $result = @mysql_insert_id($this->db_connect_id);
+            $result = @mysqli_insert_id($this->db_connect_id);
             return $result;
         }
         else
@@ -322,8 +323,8 @@ class sql_db
     }
     function sql_error($query_id = 0)
     {
-        $result["message"] = @mysql_error($this->db_connect_id);
-        $result["code"] = @mysql_errno($this->db_connect_id);
+        $result["message"] = @mysqli_error($this->db_connect_id);
+        $result["code"] = @mysqli_errno($this->db_connect_id);
 
         return $result;
     }

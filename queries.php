@@ -1,6 +1,11 @@
 <?php
 
-@set_magic_quotes_runtime(0);
+// Check if magic_quotes_runtime is active
+if(get_magic_quotes_runtime())
+{
+    // Deactivate
+    set_magic_quotes_runtime(false);
+}
 global $ranking_debug;
 $MAXSLOTS=99;
 

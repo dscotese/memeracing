@@ -2,6 +2,12 @@
 include( "mysql.php" );
 class sql_db_r extends sql_db
 {
+    // Old code uses integers to identify queries and results
+    // so this variable will be an array of the result objects
+    // the index of which will be that number.
+    //
+    var $results = array();
+    //
     //
     // Constructor
     //
@@ -25,12 +31,12 @@ class sql_db_r extends sql_db
         unset($this->query_result);
         if($query != "")
         {
-            $this->num_queries++;
-            $this->query_result = mysql_query($query, $this->db_connect_id);
+            $this->query_result = mysqli_query($this->db_connect_id, $query);
+            $this->results[$this->num_queries++] = $this->query_result;
         }
 
         // Retry if MySQL went away (usu. from a timeout)
-        if( @mysql_errno($this->db_connect_id) != 0 )
+        if( @mysqli_errno($this->db_connect_id) != 0 )
         {
             $err = $this->sql_error();
             if($err['code'] == '2006')
@@ -38,11 +44,11 @@ class sql_db_r extends sql_db
                 $newCid = $this->sql_db($this->server, $this->user, $this->password,
                     $this->dbname, $this->persistency);
                 $this->db_connect_id = $newCid;
-                $this->query_result = mysql_query($query, $this->db_connect_id);
+                $this->query_result = mysqli_query($this->db_connect_id, $query);
             }
         }
 
-        if( @mysql_errno($this->db_connect_id) != 0 )
+        if( @mysqli_errno($this->db_connect_id) != 0 )
         {
             if( $ranking_debug )
             {
@@ -60,8 +66,9 @@ class sql_db_r extends sql_db
 
         if($this->query_result)
         {
-            unset($this->row[$this->query_result]);
-            unset($this->rowset[$this->query_result]);
+            unset($this->row[$this->num_queries-1]);
+            unset($this->rowset[$this->num_queries-1]);
+            
             return $this->query_result;
         }
         else
@@ -83,25 +90,29 @@ class sql_db_r extends sql_db
         {
             return $query_id;
         }
-        $ret = @mysql_fetch_array($query_id);
+        $ret = @mysqli_fetch_array($query_id);
         return (count($ret) == 2) ? $ret[0] : $ret;
     }
 
     function column($col = 0, $query_id = 0)
     {
+        if(is_numeric($query_id))
+        {
+            $query_id = $this->results[$query_id];
+        }
         if(!$query_id)
         {
             $query_id = $this->query_result;
         }
         if($query_id)
         {
+            $last = $query_id->num_rows;
             $result = array();
-            $field = @mysql_field_name($query_id, $col);
             $rownum = 0;
-            $last = $this->sql_numrows($query_id);
             while( $rownum < $last )
             {
-                $result[] = @mysql_result($query_id, $rownum, $field);
+                $res = $query_id->data_seek($rownum)->fetch_array();
+                $result[] = $res[$col];
                 $rownum += 1;
             }
             return $result;

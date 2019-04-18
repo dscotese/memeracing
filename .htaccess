@@ -1,15 +1,19 @@
-## Prevent web clients from accessing any .ht* file.
+# Prevent web clients from accessing any .ht* file.
 <Files ~ "^\.ht">
     Order allow,deny
     Deny from all
 </Files>
 
 RewriteEngine On
+RewriteCond %{HTTP_HOST} memeracing.com$ [NC]
+RewriteCond %{REQUEST_URI} devtest
+RewriteRule devtest/(.*) $1
+
 RewriteRule (.*)\.[\d]+\.(css|js)$ $1.$2 [L] # Strip out the version number
 
-RewriteCond %{HTTP_HOST} localhost$ [NC]
+RewriteCond %{HTTP_HOST} memeracing.com$ [NC]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^index.php$
-RewriteRule . /memeracing/index.php
+RewriteRule . /index.php
 

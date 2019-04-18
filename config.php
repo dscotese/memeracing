@@ -26,7 +26,7 @@ if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' || $_SERVER['SERVER_ADDR'] =
 {
     $dbhost   = "localhost";
     $dbuser   = "root";
-    $dbpasswd = "";
+    $dbpasswd = 0;
     $ranking_debug = true;
     $siteURL = "/memeracing/";
     $docroot = "/htdocs/memeracing";
@@ -61,17 +61,17 @@ if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' || $_SERVER['SERVER_ADDR'] =
     // and no backing when they are ENTRY_INTERVAL old.
     // ------------------------------------------------
     define('ENTRY_INTERVAL','4 minute');
-} elseif(true) { die($_SERVER['SERVER_ADDR']);}
+} // elseif(true) { die($_SERVER['SERVER_ADDR']);}
 elseif(preg_match('/devtest/',$_SERVER['REQUEST_URI']))
 {
     $dbhost   = "localhost";
-    $dbuser   = "eminizer_mracing";
-    $dbpasswd = "F6XFA@A906^11SH33";
+    $dbuser   = "memeracing";
+    $dbpasswd = 1;
     $ranking_debug = true;
     $siteURL = "/devtest/";
     $fnElemNum = 1;
-    $docroot = "/home/eminizer/public_html/memeracing.net/devtest";
-    $dbname   = "eminizer_mrtest";
+    $docroot = "/var/www/memeracing.com/public_html/devtest";
+    $dbname   = "memeracing_test";
     define('BC_SERVER','127.0.0.1');
     define('CRONSEC',10);
     define('SPAMSEC',60);
@@ -81,17 +81,21 @@ elseif(preg_match('/devtest/',$_SERVER['REQUEST_URI']))
 else
 {
     $dbhost   = "localhost";
-    $dbuser   = "eminizer_mracing";
-    $dbpasswd = "F6XFA@A906^11SH33";
+    $dbuser   = "memeracing";
+    $dbpasswd = 2;
     $siteURL = "/";
-    $domain = "http://memeracing.net";
+    $domain = "http://memeracing.com";
     $fnElemNum = 0;
-    $docroot = "/home/eminizer/public_html/memeracing.net";
-    $dbname   = "eminizer_memeracing";
-    define('BC_SERVER','91.203.74.202');
+    $docroot = "/var/www/memeracing.com/public_html"; 
+    $dbname   = "memeracing_prod";
+    define('BC_SERVER','??91.203.74.202');
     define('CRONSEC',10);
     define('SPAMSEC',14400);
     define('RESERVE_INTERVAL','1 hour');
     define('ENTRY_INTERVAL','7 day');
 }
+// Load private info
+// -----------------
+include("$docroot/../../log.txt");
+$dbpasswd = $t[$dbpasswd];
 ?>

@@ -572,7 +572,7 @@ function bwb_received()
 function bwb_reset()
 {
     global $siteURL, $db;
-    if($siteURL != "/")
+    if($siteURL != "/" || $_GET['pre']=='prod')
     {
         $db->sql_query("DROP TABLES IF EXISTS entry, inspire,
             contest_entry,  player_order, backing, player,

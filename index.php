@@ -10,6 +10,7 @@ if($path[0] == '')
     array_shift($path);
 }
 $fn = 'bwb_'.preg_replace("/\?.*/",'',$path[$fnElemNum]);
+//die(print_r($path,true));
 if(function_exists($fn))
 {
     while($fnElemNum-- > 0)
@@ -34,7 +35,7 @@ else
 {
     // $content = bwb_prompts();
 }
-if($_SESSION['id'] > '')
+if(isset($_SESSION['id']) && $_SESSION['id'] > '')
 {
     preg_match('/^(?P<name>[^@]+)@/',$_SESSION['email'],$n);
     $name = $n['name'];
