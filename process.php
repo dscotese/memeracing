@@ -29,6 +29,7 @@ function payRace($wtol, $cid, $entries)
     // ----------------------------------
     foreach($data as $idx => $bettor)
     {
+        $bettor['earned'] = 0;
         if($bettor['entry_id'] == $wtol[0])
         {
             $bettor['earned'] += $bettor['bet'];
@@ -53,7 +54,7 @@ function payRace($wtol, $cid, $entries)
                 $piece = $bet / $backing;
                 $won = ($piece * $winnings);
                 $bettors[$idx]['earned'] += $won;
-// echo "$btc_addr gets $won, $piece of it.\n";
+//echo "$btc_addr gets $won, $piece of it.\n";
             }
         }
     }
@@ -107,7 +108,7 @@ function payRace($wtol, $cid, $entries)
     {
         $bettors[$e]['earned'] += $dividend;
     }
-
+// die("Terminating at line ".__LINE__.".");
     foreach($bettors as $key=>$bettor)
     {
         extract($bettor);
@@ -196,6 +197,7 @@ function voteEmail($myOrdering, $entries, $email, $pid)
 function getMyOrder($entry,$cid)
 {
     extract($entry);
+    
     $myOrder = getOrder($cid,$player_id);
     if($myOrder === false)
     {
@@ -220,7 +222,7 @@ function showOrder($sOrder, $entries, $id = 'myOrder')
     return $list;
 }
 
-function listForPLayer($sOrder, $entries, $pid)
+function listForPlayer($sOrder, $entries, $pid)
 {
     global $siteURL;
 
@@ -229,7 +231,7 @@ function listForPLayer($sOrder, $entries, $pid)
     $secret = getSecret($pid);
     if($secret == '')
     {
-        $secret = substr(md5(time().$pid),2,18);
+        $secret = substr(md5(time().$pid),2,16);
         storeSecret($pid,$secret);
     }
 
@@ -272,7 +274,7 @@ function orderFromOrdinal($ordinal)
     $places = '';
     for($position=6; $position > 0; $position -= 1)
     {
-        $occupier = floor($remaining / $facts[$position]);
+        $occupier = (int)floor($remaining / $facts[$position]);
         $remaining -= $occupier * $facts[$position];
         $place = $available[$occupier];
         $places .= $place;

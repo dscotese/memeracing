@@ -482,14 +482,26 @@ function newSlot($iid, $eid = null)
     $where = $eid ? "AND inspire_id=$iid" : "";
     $sql = "SELECT DISTINCT slot FROM $table WHERE slot IS NOT NULL $where ORDER BY slot";
     $i = 0;
-    if($taken = $db->result($sql))
+    if(($taken = $db->result($sql)) 
+        && count($taken)>0
+        && $taken[0]['slot'] == 1 ) // Say 1-12,14-16,18-27 = 25 results
     {
-        while($taken[$i]['slot'] == ++$i)
-        {
-            if($i == $MAXSLOTS)
-            {
-                return 0;
+        $hogi = count($taken)-1;              // Index of highest OR gapped element.
+        $lui = 0;                             // Index of lowest ungapped element.
+        $i = -1;                              // The smallest skipped slot number.
+        while($i == -1) {
+            if($taken[$hogi]['slot'] == $hogi + 1) {  // (zero-based array, 1st slot is 1)
+                $i = $hogi + 2;               // No gap, so use next index.
+                break;
             }
+            $midi = ($hogi + $lui) >> 1;      // Halfway between.
+            if($taken[$midi]['slot'] > $midi + 1)     // There's a gap in the first half.
+                $hogi = $midi - 1;            // Already checked midi, so shirnk it more.
+            elseif($lui == $hogi - 1)
+                $i = $lui + 2;
+            else
+                $lui = $midi;
+            print_r(array($hogi,$lui,$midi)); //,$taken));
         }
     }
     else
@@ -511,7 +523,7 @@ function freeInspireSlots()
 
     // Free 1 unbacked and unanswered inspire slot with expired reservation
     // --------------------------------------------------------------------
-    $sql = "SELECT DISTINCT r.backing_id, r.inspire_id, i.slot
+    $sql = "SELECT DISTINCT r.backing_id, r.inspire_id, i.slot, r.ts
         FROM inspire i INNER JOIN backing r USING(inspire_id)
             LEFT JOIN backing b ON b.inspire_id=r.inspire_id
                 AND IFNULL(b.tx_id,b.entry_id) IS NOT NULL
@@ -548,7 +560,7 @@ function freeEntrySlots($iid)
 
     // Free 1 unbacked entry slot with expired reservation
     // ---------------------------------------------------
-    $sql = "SELECT DISTINCT r.backing_id, i.entry_id, i.slot, i.inspire_id
+    $sql = "SELECT DISTINCT r.backing_id, i.entry_id, i.slot, i.inspire_id, r.ts
         FROM entry i INNER JOIN backing r USING(inspire_id, entry_id)
             LEFT JOIN backing b ON b.inspire_id=r.inspire_id
                 AND b.entry_id=r.entry_id AND b.tx_id IS NOT NULL

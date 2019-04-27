@@ -117,6 +117,7 @@ function bwb_hero()
 
 function bwb_slideshow()
 {
+    global $siteURL;
     include('slideshow.html');
 }
 
@@ -321,8 +322,11 @@ function bwb_contact()
 
 function bwb_logout()
 {
+    ob_start();
     session_unset();
+    ob_flush();
     session_destroy();
+    ob_clean();
     session_write_close();
     setcookie(session_name(),'',0,'/');
     session_regenerate_id(true);
@@ -334,7 +338,7 @@ function bwb_vote()
     global $path;
     $code = $path[1];
 
-    if($pid = $_SESSION['id'])
+    if(isset($_SESSION['id']) && $pid = $_SESSION['id']) // Intentional assignment
     {
         $ret = "<div class='notice'>
             You're already logged in as ".$_SESSION['email']
@@ -439,20 +443,19 @@ function bwb_vote_on()
     global $siteURL;
     $cid = $path[1];
     $pid = $_SESSION['id'];
-
     $myOrdering = orderFromOrdinal(getOrder($cid,$pid));
     $contest = getContest($cid);
-    if(time > strtotime($contest['deadline']))
+    if(time() > strtotime($contest['deadline']))
     {
         $ret = "<div class='notice'>This contest has already been decided.
-            Your vote on is is available from <a href='{$siteURL}contest/$cid'>
+            Your vote on it is available from <a href='{$siteURL}contest/$cid'>
             the contest page</a></div>";
     }
     else
     {
         $entries = getContestEntries($cid);
 
-        $newOrder = $path[2];
+        $newOrder = isset($path[2]) ? $path[2] : '';
         if(preg_match("/^([1-7]){7}$/",$newOrder))
         {
             $ret = "Your new ordering has been saved, and we emailed it to you in case you want to
@@ -541,7 +544,7 @@ function bwb_received()
     $d7fd9b3 = '';
     $secret = '';
     extract($_GET,EXTR_IF_EXISTS);
-    if(($secret == '2e5389693117e2634' || $d7fd9b3 == 'eafb09757bcf') && $value > 9999)
+    if(($secret == '2e5389693117e2634' || $d7fd9b3 == 'eafb09757bcf') && ((int)$value) > 9999)
     {
         $ret = checkBet($transaction_hash, $value);
         if($ret == 2)
@@ -603,6 +606,7 @@ function bwb_prompts($tag = true)
         <input type='hidden' name='edit'/>
         <textarea name='prompt' style='width:350px;' class='text-center'/>Enter your prompt here</textarea><br/>
         <input type='submit' value='Register My Prompt' class='btn btn-primary'
+        <input type='submit' value='Register My Prompt' class='btn btn-primary'
             title='After submitting, you can click your\nunderlined prompt to make edits.
 
 If anyone (even you!) backs your prompt or adds an answer,\nit will stick around a lot longer.'/>
@@ -620,6 +624,7 @@ PROPOSE;
 function showInspireTable($contests)
 {
     global $siteURL;
+    $ret = '';
     foreach($contests as $c)
     {
         extract($c);
@@ -724,6 +729,7 @@ function sendPlayerMail($to, $subj, $msg)
         $notMailed .= "<div class='notice'>
             Not emailing '$subj' email to $to:<br/>$body<hr/>
             </div>";
+        errLog(dbQuote("Skipped mailing $msg to $to."));
     }
     else
     {
@@ -758,8 +764,7 @@ function bwb_proposal()
         $ret .= "There are no answers yet.";
     }
 
-    $frmEmail = $_SESSION['email'];
-    $frmEmail = $frmEmail > '' ? $frmEmail : 'Enter your email address';
+    $frmEmail = isset($_SESSION['email']) ? $_SESSION['email'] : 'Enter your email address';
     $ret .= <<< PROPOSE
 <br/><br/>
 <h2>Propose your own answer</h2>
@@ -794,13 +799,14 @@ PROPOSE;
 function showEntryTable($entries)
 {
     global $OUR_BTC_ADDR;
+    $entry_rows = '';
     foreach($entries as $_entry)
     {
         extract($_entry);
         $entry = htmlspecialchars($entry);
         if(isset($_SESSION['myAnswers'])
             && @in_array($entry_id, $_SESSION['myAnswers'])
-            && backing == 0)
+            && $backing == 0)
         {
             $entry = "<span id='a$entry_id' class='editme'>$entry</span>";
         }
@@ -808,7 +814,7 @@ function showEntryTable($entries)
             <td><input type='submit' name='r[$entry_id]' value='Reserve' /></td>
             <td title='backed by $backing'>$entry</td></tr>\n";
     }
-    $ret .= "<p class='inx'>
+    $ret = "<p class='inx'>
         If you would like to back one of these answers, click the reserve button.
         Instructions will appear at the top of the next page.  You will have
         15 minutes to send in the bitcoin.  If you send it after the 15 minutes, you may
@@ -986,8 +992,7 @@ function bwb_search($isMain = false)
     {
         $ret = "<center>$ret</center>";
     }
-    $terms = $_GET['terms'];
-    if($terms > '')
+    if(isset($_GET['terms']) && ($terms = $_GET['terms']) > '')
     {
         $ret .= isPost('reserve');
         $ret .= searchQuery(dbQuote($terms));
@@ -1018,9 +1023,8 @@ function bwb_respond()
 {
     global $entries, $inspire_id;
 
-    if($_POST['answer'] > '')
+    if(($answer = (isset($_POST['answer']) ? $_POST['answer'] : '')) > '')
     {
-        $answer = $_POST['answer'];
         $email = $_POST['email'];
         $addr = $_POST['btc_addr'];
 
@@ -1080,7 +1084,8 @@ function notice($str)
 function bwb_reserve()
 {
     global $siteURL;
-    if(is_array($_POST['r']))
+    $ret = '';
+    if(isset($_POST['r']) && is_array($_POST['r']))
     {
         $keys = array_keys($_POST['r']);
         $entry_to_reserve = $keys[0];

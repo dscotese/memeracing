@@ -4,7 +4,7 @@
 
     if(isset($_GET['p']))
     {
-        die(getSecrets($_GET['p']));
+        die(getSecret($_GET['p']));
     }
 ?>
 var unittest;
@@ -237,8 +237,8 @@ function checkStep()
         else
         {
             var p = unittest.$("body").text().match(/Address.*?received.*?BTC/g);
-            var req = {206:0.11190507,216:0.23329600,226:0.02788295,236:0.01670681,246:0.00294575,
-                256:0.06015739,"11O":0.00407184,"11G":0.00407184,"14T":0.00407184,
+            var req = {206:0.11194451,216:0.23334333,226:0.02793816,236:0.00261844,246:0.01673436,
+                256:0.06023628,"11O":0.00407184,"11G":0.00407184,"14T":0.00407184,
                 "15D":0.00407184,"16P":0.00407184,"10W":0.00407184,"12F":0.00407184};
             var r = '';
             for(var i in p)
@@ -624,7 +624,7 @@ function checkVoting(p)
     {
         report("No new link for Player "+p+"... Retrying...");
         step = step - 1;
-        logout();
+        //logout();
         return false;
     }
     // And that we have an orderable list
@@ -646,7 +646,7 @@ function testBet(amt, pretx, name)
     {
         return function(isOK,stat)
         {
-            if(isOK != "*OK*")
+            if(!isOK.endswith("*OK*"))
                 report("Bet on "+c+" failed with "+isOK+".("+stat+").");
         };
     }(name));

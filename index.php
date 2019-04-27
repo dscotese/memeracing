@@ -1,6 +1,7 @@
 <?php
 $home = 1;
 $notMailed = "";
+$content = '';
 session_start();
 include('queries.php');
 include('controller.php');
@@ -41,6 +42,11 @@ if(isset($_SESSION['id']) && $_SESSION['id'] > '')
     $name = $n['name'];
     $logout = "<li><a href='{$siteURL}logout'>$name Log out</a></li>";
 }
+else
+{
+    $logout = '';
+    $name = '';
+}
 include('header.php');
 ?>
 
@@ -74,7 +80,7 @@ include('header.php');
             <?php echo $content; ?>
 
           </div> <!--end #content-->
-        </div> <!--end #main-->
+        </div> <!--end #main (check)-->
       </div>
 
 <?php include('footer.php'); ?>

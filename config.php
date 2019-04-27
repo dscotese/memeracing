@@ -22,6 +22,8 @@ if (get_magic_quotes_gpc()) {
     unset($process);
 }
 
+$hide_debug = false;
+
 if( substr($_SERVER['SERVER_ADDR'],0,6) == '127.0.' || $_SERVER['SERVER_ADDR'] == "::1")
 {
     $dbhost   = "localhost";
@@ -66,7 +68,7 @@ elseif(preg_match('/devtest/',$_SERVER['REQUEST_URI']))
 {
     $dbhost   = "localhost";
     $dbuser   = "memeracing";
-    $dbpasswd = 1;
+    $dbpasswd = 2;
     $ranking_debug = true;
     $siteURL = "/devtest/";
     $fnElemNum = 1;
@@ -80,6 +82,7 @@ elseif(preg_match('/devtest/',$_SERVER['REQUEST_URI']))
 }
 else
 {
+    $hide_debug = true;
     $dbhost   = "localhost";
     $dbuser   = "memeracing";
     $dbpasswd = 2;
@@ -96,6 +99,6 @@ else
 }
 // Load private info
 // -----------------
-include("$docroot/../../log.txt");
+include(__DIR__."/../log.txt");
 $dbpasswd = $t[$dbpasswd];
 ?>

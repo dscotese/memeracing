@@ -54,9 +54,10 @@ class sql_db_r extends sql_db
             {
                 $err = $this->sql_error();
                 echo "<pre>";
-                print_r( get_included_files() );
+                debug_print_backtrace(0,4);
                 print_r( $err );
                 echo "</pre><br />$query";
+                die();
             }
             else
             {
@@ -91,7 +92,8 @@ class sql_db_r extends sql_db
             return $query_id;
         }
         $ret = @mysqli_fetch_array($query_id);
-        return (count($ret) == 2) ? $ret[0] : $ret;
+        return is_null($ret) ? false
+            : (count($ret) == 2 ? $ret[0] : $ret);
     }
 
     function column($col = 0, $query_id = 0)
@@ -111,7 +113,8 @@ class sql_db_r extends sql_db
             $rownum = 0;
             while( $rownum < $last )
             {
-                $res = $query_id->data_seek($rownum)->fetch_array();
+                $query_id->data_seek($rownum);
+                $res = $query_id->fetch_array();
                 $result[] = $res[$col];
                 $rownum += 1;
             }
