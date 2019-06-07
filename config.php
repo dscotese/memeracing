@@ -101,4 +101,5 @@ else
 // -----------------
 include(__DIR__."/../log.txt");
 $dbpasswd = $t[$dbpasswd];
+$macaroon = $t[3];
 ?>
