@@ -10,6 +10,7 @@
 $reservation = "1 hour";
 
 include("process.php");
+include("Lightning.php");
 
 if(getLastCron() < time() - CRONSEC && count($_POST) == 0)
 {
@@ -108,7 +109,24 @@ function do_cron()
             endContest($end['contest_id']);
         }
     }
+ 
+    if($Invoice = lookupInvoice($r_hash))
+    {
+	if(isset($Invoice->settled) && $Invoice->settled){
+		LNPayment($Invoice->memo,'',$Invoice->value);
+//		bwb_received();		
+	}	
+    }
+
 }
+
+function LNPayment( $memo, $payerURI, $amount ) {
+    if (!checkLNBet($memo, $payerURI, $amount)) {
+        storeLNTx($memo, $payerURI, $amount);
+    }
+    // Make LND (the call in do_cron) stop returning the same invoice repeatedly.
+}
+
 
 function bwb_hero()
 {
@@ -195,6 +213,7 @@ function bwb_sendAll()
 
 function getBettor($tx)
 {
+    /*  Include here call to lnd to wait invoice */
     global $ranking_debug;
     $url = "https://blockchain.info/rawtx/$tx";
     if($ranking_debug)
@@ -631,6 +650,7 @@ function showInspireTable($contests)
         $inspiration = htmlspecialchars($inspiration);
         $c_pl = $numc == 1 ? "contest" : "contests";
         $e_pl = $nume == 1 ? "entry" : "entries";
+        $invested = $invested / $numc; // Correcting for Query in getInspires
         if(isset($_SESSION['myPrompts'])
             && @in_array($inspire_id,$_SESSION['myPrompts'])
             && 0 == $numc && 0 == $nume)
@@ -1004,6 +1024,7 @@ function searchQuery($terms)
 {
     $foundPrompts = getInspires("WHERE inspiration LIKE '%$terms%'");
     $foundAnswers = getEntries("WHERE entry LIKE '%$terms%'");
+    $ret = '';
     if($foundPrompts)
     {
         $ret = '<h2>Prompts</h2>'.showInspireTable($foundPrompts);
@@ -1105,19 +1126,20 @@ function start_timer($iid, $eid, $goal, $answer = '')
 {
     global $OUR_BTC_ADDR;
     $slot = find_slot($iid, $eid);
+    $backed = ($eid > 0 ? "response" : "prompt");
 
     if($slot == '0000' || (substr($slot,0,2) == '00' && $eid > ''))
     {
-        $ret =  "($slot)We are unable to reserve a slot for this "
-            .($eid > 0 ? "response" : "prompt")." at this time.
+        $ret =  "($slot)We are unable to reserve a slot for this $backed at this time.
             Please try again in a few minutes.";
     }
 
     $for = $eid > 0 ? str_replace("'","&apos;",strip_tags($answer)) : "this prompt";
-
-    $ret = "<div id='bd$slot'><br/>To $goal with <input type='text' id='$slot' class='betCalc'
-        def='0.0000' value='how many?'/> BTC,
-    Send <span id='bc$slot'>0.0000$slot</span> to our bitcoin address ($OUR_BTC_ADDR).<br/>
+//    $lnInvoice = `lncli -n testnet addinvoice --memo "$slot backing a Memeracing $backed"`;
+    $text_ln = $slot." backing a Memeracing ".$backed;
+    $lnInvoice = getPaymentRequest($text_ln,'0','1800');
+    $ret = "<div id='bd$slot'><br/>To $goal, please use the following Lightning Invoice to pay 
+        whatever amount you wish to.<br/><textarea readonly>$lnInvoice->payment_request</textarea>
     Time left: <span class='timer' mins='15'></span> Please reload if you can't pay before this timer runs out.<br/>
         Bitcoins are paid back to the address from which they came.<br/>
         <strong>Only use private wallets to back prompts and answers!</strong></div>";
